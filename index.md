@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="styles.css">
+
 <div style="text-align: center;">
     <h2 id="puzzle-clue"></p>
     <h2 id="puzzle-solution"></p>

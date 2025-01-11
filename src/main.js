@@ -80,7 +80,7 @@ for (let i = 0; i < puzzle.solution.length; i++) {
 
     // add a button where there is a letter in the solution
     else if (puzzle.solution[i].match("[A-Z]")) {
-        solutionLine.insertAdjacentHTML("beforeend", "<button type=\"button\" id=\"" + i.toString() + "\">_</button>");
+        solutionLine.insertAdjacentHTML("beforeend", "<div class=\"letter-unsolved\" id=\"" + i.toString() + "\">_</div>");
     }
 
     // add a non-clickable character if it is neither a space nor a letter
