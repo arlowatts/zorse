@@ -1,7 +1,6 @@
-<head>
-    <script src="src/main.js"></script>
-</head>
+<div style="text-align: center;">
+    <h2 id="puzzle-clue"></p>
+    <h2 id="puzzle-solution"></p>
+</div>
 
-# Zorse
-
-A recreation of the Zorse game by the New York Times.
+<script src="src/main.js"></script>
