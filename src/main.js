@@ -1,14 +1,5 @@
 const MAX_DIGITS = 2;
 
-let p = new Puzzle("this is the clue", "this is the solution", "these are the letters");
-console.log(p);
-
-let s = Puzzle.toEncodedString(p)
-console.log(e);
-
-let q = Puzzle.fromEncodedString(s);
-console.log(q);
-
 class Puzzle {
     #clue;
     #solution;
@@ -50,3 +41,12 @@ class Puzzle {
         return btoa(decodedString);
     }
 }
+
+let p = new Puzzle("this is the clue", "this is the solution", "these are the letters");
+console.log(p);
+
+let s = Puzzle.toEncodedString(p)
+console.log(e);
+
+let q = Puzzle.fromEncodedString(s);
+console.log(q);
