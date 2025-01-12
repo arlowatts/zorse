@@ -1,116 +1,112 @@
-// maximum number of digits in the length of the clue or solution
-const MAX_DIGITS = 2;
-
-// radix used to encode the length of the clue and solution
-const RADIX = 16;
-
-// name of the search parameter used to store the puzzle
-const SEARCH_PARAM_NAME = "q";
-
-// the alphabet used to initialize the on-screen keyboard
+// alphabet used to initialize the on-screen keyboard
 const ALPHABET = "QWERTYUIOPASDFGHJKLZXCVBNM";
 
+// names of the search parameters used to store the puzzle
+const SEARCH_PARAM_CLUE     = "clue";
+const SEARCH_PARAM_SOLUTION = "solution";
+const SEARCH_PARAM_LETTERS  = "letters";
+
+// regex matches for gaps and tiles in the solution
+const LETTER_SPACE = "^ $";
+const LETTER_TILE = "^[A-Z]$";
+
+// HTML for gaps
+const HTML_WORD_GAP = "&emsp;";
+const HTML_LETTER_GAP = "&hairsp;";
+
 // default character used in empty tiles
-const EMPTY = "\u00A0";
+const EMPTY_TILE = "\u00A0";
+
+// escape codes for dangerous characters
+const ESCAPE_CODES = {
+    "&": "&amp;",
+    "<": "&lt;",
+};
 
 class Puzzle {
-    // given as a hint to the player to help solve the puzzle
-    clue;
+    // elements of the puzzle
+    #clue;
+    #solution;
+    #letters;
 
-    // the solution to the puzzle
-    solution;
-
-    // a string indicating which letters in the solution are revealed
-    letters;
-
-    // HTML element displaying the clue
-    clueElement;
-
-    // HTML element displaying the solution
-    solutionElement;
-
-    // array of HTML elements containing the letters of the solution
-    solutionTiles;
+    // tiles displaying the puzzle
+    #solutionTiles;
 
     constructor(clue, solution, letters) {
-        this.clue     = clue.toUpperCase();
-        this.solution = solution.toUpperCase();
-        this.letters  = letters.toUpperCase();
-    }
+        this.#clue     = clue.toUpperCase();
+        this.#solution = solution.toUpperCase();
+        this.#letters  = letters.toUpperCase();
 
-    setClueElement(clueElement) {
-        this.clueElement = clueElement;
-    }
-
-    setSolutionElement(solutionElement) {
-        this.solutionElement = solutionElement;
+        this.#solutionTiles = {};
     }
 
     // load the puzzle clue into the clue element
-    initializeClueElement() {
-        this.clueElement.textContent = this.clue;
+    initializeClueElement(clueElement) {
+        clueElement.textContent = this.#clue;
     }
 
     // set up the blank tiles in the solution element
-    initializeSolutionElement() {
-        this.solutionTiles = {};
-
-        for (let i = 0; i < this.solution.length; i++) {
+    initializeSolutionElement(solutionElement) {
+        for (let i = 0; i < this.#solution.length; i++) {
 
             // add a gap where there is a space in the solution
-            if (this.solution[i].match(" ")) {
-                this.solutionElement.insertAdjacentHTML("beforeend", "&emsp;");
+            if (this.#solution[i].match(LETTER_SPACE)) {
+                solutionElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
             }
 
             // add a tile where there is a letter in the solution
-            else if (this.solution[i].match("[A-Z]")) {
-                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\" class=\"tile tile-unsolved\"></span>");
-                this.solutionTiles[i] = document.getElementById(i.toString());
-                this.solutionTiles[i].textContent = EMPTY;
+            else if (this.#solution[i].match(LETTER_TILE)) {
+                solutionElement.insertAdjacentHTML("beforeend", `<span id="${i}" class="tile tile-unsolved"></span>`);
+
+                // save the reference to the tile
+                this.#solutionTiles[i] = document.getElementById(i);
+
+                // set the tile to contain an empty character to preserve consistent formatting
+                this.#solutionTiles[i].textContent = EMPTY_TILE;
 
                 // set the onclick function to reveal letters when the tile is clicked
                 const puzzle = this;
-                this.solutionTiles[i].addEventListener("click", () => {puzzle.addLetter(puzzle.solution[i]);});
+                this.#solutionTiles[i].addEventListener("click", () => {puzzle.addLetter(puzzle.#solution[i]);});
             }
 
-            // add a non-clickable character if it is neither a space nor a letter
+            // add a non-clickable character where there is a special character in the solution
             else {
-                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\"></span>");
-
-                // set the character using textContent to avoid needing to escape it
-                document.getElementById(i.toString()).textContent = this.solution[i];
+                solutionElement.insertAdjacentHTML("beforeend", `${ESCAPE_CODES[this.#solution[i]] || this.#solution[i]}`);
             }
 
             // add a small space between elements
-            this.solutionElement.insertAdjacentHTML("beforeend", "&hairsp;");
+            solutionElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
         }
 
-        this.revealLetters();
+        this.revealLetter();
     }
 
     // add a letter to the list of revealed letters
     addLetter(letter) {
 
         // check that the character is a simple letter and that it is not revealed
-        if (letter.length === 1 && letter.match("[A-Z]") && this.letters.indexOf(letter) === -1) {
-            this.letters += letter;
-            this.revealLetters();
+        if (letter.match(LETTER_TILE) && this.#letters.indexOf(letter) === -1) {
+            this.#letters += letter;
+            this.revealLetter();
         }
     }
 
     // update tiles to reveal letters
-    revealLetters() {
-        for (let i = 0; i < this.solution.length; i++) {
+    revealLetter() {
+        for (let i = 0; i < this.#solution.length; i++) {
 
             // reveal tiles which appear in the list of shown letters
-            if (this.letters.indexOf(this.solution[i]) > -1 && this.solutionTiles[i] && this.solutionTiles[i].classList.contains("tile-unsolved")) {
+            if (this.#solutionTiles[i] && this.#letters.indexOf(this.#solution[i]) > -1) {
 
                 // update the content of the tile
-                this.solutionTiles[i].textContent = puzzle.solution[i];
+                this.#solutionTiles[i].textContent = this.#solution[i];
 
                 // update the display of the tile
-                this.solutionTiles[i].classList.remove("tile-unsolved");
-                this.solutionTiles[i].classList.add("tile-solved");
+                this.#solutionTiles[i].classList.remove("tile-unsolved");
+                this.#solutionTiles[i].classList.add("tile-solved");
+
+                // remove the tile from the dictionary of tiles
+                this.#solutionTiles[i] = undefined;
             }
         }
     }
@@ -119,12 +115,12 @@ class Puzzle {
     sketchLetter(letter) {
 
         // check that the character is a simple letter and that it is not revealed
-        if (letter.length === 1 && letter.match("[A-Z]") && this.letters.indexOf(letter) === -1) {
+        if (letter.match(LETTER_TILE) && this.#letters.indexOf(letter) === -1) {
 
             // find the first empty hidden tile
-            for (let i = 0; i < this.solution.length; i++) {
-                if (this.solutionTiles[i] && this.solutionTiles[i].classList.contains("tile-unsolved") && this.solutionTiles[i].textContent === EMPTY) {
-                    this.solutionTiles[i].textContent = letter;
+            for (let i = 0; i < this.#solution.length; i++) {
+                if (this.#solutionTiles[i] && this.#solutionTiles[i].textContent === EMPTY_TILE) {
+                    this.#solutionTiles[i].textContent = letter;
                     break;
                 }
             }
@@ -135,53 +131,65 @@ class Puzzle {
     deleteLetter() {
 
         // find the last hidden tile with a letter on it
-        for (let i = this.solution.length - 1; i >= 0; i--) {
-            if (this.solutionTiles[i] && this.solutionTiles[i].classList.contains("tile-unsolved") && this.solutionTiles[i].textContent !== EMPTY) {
-                this.solutionTiles[i].textContent = EMPTY;
+        for (let i = this.#solution.length - 1; i >= 0; i--) {
+            if (this.#solutionTiles[i] && this.#solutionTiles[i].textContent !== EMPTY_TILE) {
+                this.#solutionTiles[i].textContent = EMPTY_TILE;
                 break;
             }
         }
     }
 
-    // create a puzzle from an encoded string
-    static fromEncodedString(encodedString) {
-        let decodedString = atob(encodedString);
-        let i = 0;
+    // encode the puzzle as three url-safe base64 strings
+    static encode(puzzle) {
+        const encoder = new TextEncoder();
 
-        // parse the clue length, solution length, and number of revealed letters
-        let clueLength     = parseInt(decodedString.slice(i, i += MAX_DIGITS), RADIX);
-        let solutionLength = parseInt(decodedString.slice(i, i += MAX_DIGITS), RADIX);
-        let lettersLength  = parseInt(decodedString.slice(i, i += MAX_DIGITS), RADIX);
+        // encode the parts of the puzzle as arrays of bytes
+        const clueBytes     = encoder.encode(puzzle.clue);
+        const solutionBytes = encoder.encode(puzzle.solution);
+        const lettersBytes  = encoder.encode(puzzle.letters);
 
-        // parse the clue, solution, and revealed letters
-        let clue     = decodedString.slice(i, i += clueLength);
-        let solution = decodedString.slice(i, i += solutionLength);
-        let letters  = decodedString.slice(i, i += lettersLength);
+        // encode the arrays of bytes as url-safe base64 strings
+        const encodedPuzzle = {
+            SEARCH_PARAM_CLUE:     clueBytes.toBase64({ alphabet: "base64url" }),
+            SEARCH_PARAM_SOLUTION: solutionBytes.toBase64({ alphabet: "base64url" }),
+            SEARCH_PARAM_LETTERS:  lettersBytes.toBase64({ alphabet: "base64url" }),
+        };
 
-        return new Puzzle(clue, solution, letters);
+        return encodedPuzzle;
     }
 
-    // encode the puzzle as a string
-    static toEncodedString(puzzle) {
-        let decodedString = "";
+    // create a puzzle from an encoded string
+    static decode(encodedPuzzle) {
+        const decoder = new TextDecoder();
 
-        // add the clue length, solution length, and number of revealed letters
-        decodedString += puzzle.clue.length.toString(RADIX).padStart(MAX_DIGITS, "0");
-        decodedString += puzzle.solution.length.toString(RADIX).padStart(MAX_DIGITS, "0");
-        decodedString += puzzle.letters.length.toString(RADIX).padStart(MAX_DIGITS, "0");
+        // decode the url-safe base64 strings as arrays of bytes
+        const clueBytes     = Uint8Array.fromBase64(encodedPuzzle[SEARCH_PARAM_CLUE], { alphabet: "base64url" });
+        const solutionBytes = Uint8Array.fromBase64(encodedPuzzle[SEARCH_PARAM_SOLUTION], { alphabet: "base64url" });
+        const lettersBytes  = Uint8Array.fromBase64(encodedPuzzle[SEARCH_PARAM_LETTERS], { alphabet: "base64url" });
 
-        // add the clue, solution, and revealed letters
-        decodedString += puzzle.clue;
-        decodedString += puzzle.solution;
-        decodedString += puzzle.letters;
+        // decode the arrays of bytes as parts of the puzzle
+        const clue     = decoder.decode(clueBytes);
+        const solution = decoder.decode(solutionBytes);
+        const letters  = decoder.decode(lettersBytes);
 
-        return btoa(decodedString);
+        return new Puzzle(clue, solution, letters);
     }
 }
 
 // load the puzzle from the search parameter or use the fallback
 const searchParams = new URLSearchParams(window.location.search);
-const puzzle = Puzzle.fromEncodedString(searchParams.get(SEARCH_PARAM_NAME) || "MzIxNzAyV0hFUkUgVE8gRElSRUNUIENPTVBMQUlOVFMgQUJPVVQgTkFUVVJBTCBESVNBU1RFUlNUQUxLIFRPIFRIRSBIQU5EIE9GIEdPREFH");
+
+// copy the values of the search parameters into a dictionary to decode
+const encodedPuzzle = {
+    SEARCH_PARAM_CLUE:     searchParams.get(SEARCH_PARAM_CLUE),
+    SEARCH_PARAM_SOLUTION: searchParams.get(SEARCH_PARAM_SOLUTION),
+    SEARCH_PARAM_LETTERS:  searchParams.get(SEARCH_PARAM_LETTERS),
+};
+
+// decode the puzzle or use the fallback if decoding fails
+let puzzle;
+try { puzzle = Puzzle.decode(encodedPuzzle); }
+catch { puzzle = new Puzzle("A 24-hour drive with 30 passengers", "The wheels on the bus go round and round the clock", "wkul"); }
 
 // initialize the on-screen keyboard
 for (let i = 0; i < ALPHABET.length; i++) {
@@ -204,10 +212,6 @@ addEventListener("keydown", (e) => {
     }
 });
 
-// get references to the elements displaying the clue and the solution
-puzzle.setClueElement(document.getElementById("puzzle-clue"));
-puzzle.setSolutionElement(document.getElementById("puzzle-solution"));
-
 // initialize the puzzle display
-puzzle.initializeClueElement();
-puzzle.initializeSolutionElement();
+puzzle.initializeClueElement(document.getElementById("puzzle-clue"));
+puzzle.initializeSolutionElement(document.getElementById("puzzle-solution"));
