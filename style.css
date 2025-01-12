@@ -1,21 +1,21 @@
-span.letter {
-    width: 1em;
+span.tile {
+    width: 1.1em;
     height: 1.5em;
-    line-height: 1.5em;
+    line-height: 1.3em;
     text-align: center;
     display: inline-block;
     border-radius: 0.2em;
+    border-style: solid;
+    border-width: 0.1em;
 }
 
-span.letter-solved {
-    background: #EEEEEE;
+span.tile-solved {
+    background: #B8CCA0;
+    border-color: #BBD0AA;
 }
 
-span.letter-unsolved {
-    background: #BBEECC;
+span.tile-unsolved {
+    background: none;
+    border-color: #EEEEEE;
     cursor: pointer;
-}
-
-span.letter-unsolved:hover {
-    background: #B0E0C0;
 }

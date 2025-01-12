@@ -53,7 +53,7 @@ class Puzzle {
 
             // add a button where there is a letter in the solution
             else if (this.solution[i].match("[A-Z]")) {
-                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\" class=\"letter letter-unsolved\">_</span>");
+                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\" class=\"tile tile-unsolved\">&nbsp;</span>");
 
                 // set the onclick function to reveal letters when the tile is clicked
                 const puzzle = this;
@@ -91,14 +91,14 @@ class Puzzle {
             if (this.letters.indexOf(this.solution[i]) > -1) {
                 const tile = document.getElementById(i.toString());
 
-                if (tile.classList.contains("letter-unsolved")) {
+                if (tile.classList.contains("tile-unsolved")) {
 
                     // update the content of the tile
                     tile.textContent = puzzle.solution[i];
 
                     // update the display of the tile
-                    tile.classList.remove("letter-unsolved");
-                    tile.classList.add("letter-solved");
+                    tile.classList.remove("tile-unsolved");
+                    tile.classList.add("tile-solved");
 
                     // update the onclick function of the tile
                     tile.onclick = null;
