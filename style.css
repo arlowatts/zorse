@@ -1,6 +1,8 @@
 p {
     font-weight: bold;
     font-size: 25px;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 span.tile {
