@@ -8,10 +8,6 @@ const KEYBOARD_LAYOUT = [
     ["Z", "X", "C", "V", "B", "N", "M"],
 ];
 
-// create the on-screen keyboard
-const keyboard = new Keyboard(KEYBOARD_LAYOUT);
-keyboard.initializeKeyboardElement(document.getElementById("keyboard"));
-
 // load the search parameters
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -27,9 +23,13 @@ let puzzle;
 try { puzzle = Puzzle.decode(encodedPuzzle); }
 catch { puzzle = new Puzzle("The anthem for a 24-hour drive with 30 passengers", "The wheels on the bus go round and round the clock", "wkul"); }
 
-// initialize the keyboard events
-keyboard.initializeEventListeners(puzzle);
-
 // initialize the puzzle display
 puzzle.initializeClueElement(document.getElementById("puzzle-clue"));
 puzzle.initializeSolutionElement(document.getElementById("puzzle-solution"));
+
+// create the on-screen keyboard
+const keyboard = new Keyboard(KEYBOARD_LAYOUT);
+keyboard.initializeKeyboardElement(document.getElementById("keyboard"));
+
+// initialize the keyboard events
+keyboard.initializeEventListeners(puzzle);

@@ -47,6 +47,7 @@ export class Keyboard {
         // set the puzzle to block keys that are revealed
         const keyboard = this;
         puzzle.setTriggerOnReveal((keys) => { keyboard.blockKeys(keys); });
+        puzzle.revealLetter();
 
         // iterate over every key in the layout
         for (let i = 0; i < this.#layout.length; i++) {
@@ -55,11 +56,14 @@ export class Keyboard {
 
                 // add an event listener to sketch a letter when the tile is clicked
                 const keyboard = this;
-                this.#keyboardTiles[key].addEventListener("click", () => {
-                    if (keyboard.#keyboardTiles[key]) {
-                        puzzle.sketchLetter(key);
-                    }
-                });
+
+                if (this.#keyboardTiles[key]) {
+                    this.#keyboardTiles[key].addEventListener("click", () => {
+                        if (keyboard.#keyboardTiles[key]) {
+                            puzzle.sketchLetter(key);
+                        }
+                    });
+                }
             }
         }
 
