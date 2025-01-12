@@ -44,13 +44,22 @@ export class Keyboard {
     // create the event listeners for both the on-screen keyboard and keydown events
     initializeEventListeners(puzzle) {
 
+        // set the puzzle to block keys that are revealed
+        const keyboard = this;
+        puzzle.setTriggerOnReveal((keys) => { keyboard.blockKeys(keys); });
+
         // iterate over every key in the layout
         for (let i = 0; i < this.#layout.length; i++) {
             for (let j = 0; j < this.#layout[i].length; j++) {
                 const key = this.#layout[i][j];
 
                 // add an event listener to sketch a letter when the tile is clicked
-                this.#keyboardTiles[key].addEventListener("click", () => { puzzle.sketchLetter(key); });
+                const keyboard = this;
+                this.#keyboardTiles[key].addEventListener("click", () => {
+                    if (keyboard.#keyboardTiles[key]) {
+                        puzzle.sketchLetter(key);
+                    }
+                });
             }
         }
 
@@ -70,5 +79,20 @@ export class Keyboard {
                 puzzle.deleteLetter();
             }
         });
+    }
+
+    // permanently block keys from being clicked or typed
+    blockKeys(keys) {
+        for (let i = 0; i < keys.length; i++) {
+            if (this.#keyboardTiles[keys[i]]) {
+
+                // update the display of the tile
+                this.#keyboardTiles[keys[i]].classList.remove("tile-unsolved");
+                this.#keyboardTiles[keys[i]].classList.add("tile-solved");
+
+                // remove the tile from the dictionary of tiles
+                this.#keyboardTiles[keys[i]] = undefined;
+            }
+        }
     }
 }

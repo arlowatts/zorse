@@ -29,6 +29,9 @@ export class Puzzle {
     // tiles displaying the puzzle
     #solutionTiles;
 
+    // function invoked when tiles are revealed
+    #triggerOnReveal;
+
     constructor(clue, solution, letters) {
         this.#clue     = clue.toUpperCase();
         this.#solution = solution.toUpperCase();
@@ -90,6 +93,12 @@ export class Puzzle {
 
     // update tiles to reveal letters
     revealLetter() {
+
+        // invoke the custom function if it exists and pass it the revealed letters
+        if (this.#triggerOnReveal) {
+            this.#triggerOnReveal(this.#letters);
+        }
+
         for (let i = 0; i < this.#solution.length; i++) {
 
             if (this.#solutionTiles[i]) {
@@ -114,6 +123,11 @@ export class Puzzle {
                 }
             }
         }
+    }
+
+    // set a function that is invoked when tiles are revealed
+    setTriggerOnReveal(f) {
+        this.#triggerOnReveal = f;
     }
 
     // add a letter to the first hidden tile
