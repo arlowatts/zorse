@@ -10,6 +10,9 @@ const SEARCH_PARAM_NAME = "q";
 // the alphabet used to initialize the on-screen keyboard
 const ALPHABET = "QWERTYUIOPASDFGHJKLZXCVBNM";
 
+// default character used in empty tiles
+const EMPTY = "\u00A0";
+
 class Puzzle {
     // given as a hint to the player to help solve the puzzle
     clue;
@@ -25,6 +28,9 @@ class Puzzle {
 
     // HTML element displaying the solution
     solutionElement;
+
+    // array of HTML elements containing the letters of the solution
+    solutionTiles;
 
     constructor(clue, solution, letters) {
         this.clue     = clue.toUpperCase();
@@ -47,20 +53,24 @@ class Puzzle {
 
     // set up the blank tiles in the solution element
     initializeSolutionElement() {
+        this.solutionTiles = {};
+
         for (let i = 0; i < this.solution.length; i++) {
 
-            // add an empty space where there is a space in the solution
+            // add a gap where there is a space in the solution
             if (this.solution[i].match(" ")) {
                 this.solutionElement.insertAdjacentHTML("beforeend", "&emsp;");
             }
 
-            // add a button where there is a letter in the solution
+            // add a tile where there is a letter in the solution
             else if (this.solution[i].match("[A-Z]")) {
-                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\" class=\"tile tile-unsolved\">&nbsp;</span>");
+                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\" class=\"tile tile-unsolved\"></span>");
+                this.solutionTiles[i] = document.getElementById(i.toString());
+                this.solutionTiles[i].textContent = EMPTY;
 
                 // set the onclick function to reveal letters when the tile is clicked
                 const puzzle = this;
-                document.getElementById(i.toString()).addEventListener("click", () => {puzzle.addLetter(puzzle.solution[i]);});
+                this.solutionTiles[i].addEventListener("click", () => {puzzle.addLetter(puzzle.solution[i]);});
             }
 
             // add a non-clickable character if it is neither a space nor a letter
@@ -80,7 +90,9 @@ class Puzzle {
 
     // add a letter to the list of revealed letters
     addLetter(letter) {
-        if (this.letters.indexOf(letter) === -1) {
+
+        // check that the character is a simple letter and that it is not revealed
+        if (letter.length === 1 && letter.match("[A-Z]") && this.letters.indexOf(letter) === -1) {
             this.letters += letter;
             this.revealLetters();
         }
@@ -91,40 +103,29 @@ class Puzzle {
         for (let i = 0; i < this.solution.length; i++) {
 
             // reveal tiles which appear in the list of shown letters
-            if (this.letters.indexOf(this.solution[i]) > -1) {
-                const tile = document.getElementById(i.toString());
+            if (this.letters.indexOf(this.solution[i]) > -1 && this.solutionTiles[i] && this.solutionTiles[i].classList.contains("tile-unsolved")) {
 
-                if (tile.classList.contains("tile-unsolved")) {
+                // update the content of the tile
+                this.solutionTiles[i].textContent = puzzle.solution[i];
 
-                    // update the content of the tile
-                    tile.textContent = puzzle.solution[i];
-
-                    // update the display of the tile
-                    tile.classList.remove("tile-unsolved");
-                    tile.classList.add("tile-solved");
-
-                    // update the onclick function of the tile
-                    tile.onclick = null;
-                }
+                // update the display of the tile
+                this.solutionTiles[i].classList.remove("tile-unsolved");
+                this.solutionTiles[i].classList.add("tile-solved");
             }
         }
     }
 
     // add a letter to the first hidden tile
     sketchLetter(letter) {
+
         // check that the character is a simple letter and that it is not revealed
         if (letter.length === 1 && letter.match("[A-Z]") && this.letters.indexOf(letter) === -1) {
 
             // find the first empty hidden tile
             for (let i = 0; i < this.solution.length; i++) {
-                if (this.solution[i].match("[A-Z]")) {
-                    const tile = document.getElementById(i.toString());
-    
-                    // display the letter in the tile
-                    if (tile.classList.contains("tile-unsolved") && tile.textContent === "\u00A0") {
-                        tile.textContent = letter;
-                        break;
-                    }
+                if (this.solutionTiles[i] && this.solutionTiles[i].classList.contains("tile-unsolved") && this.solutionTiles[i].textContent === EMPTY) {
+                    this.solutionTiles[i].textContent = letter;
+                    break;
                 }
             }
         }
@@ -132,16 +133,12 @@ class Puzzle {
 
     // delete the last sketched letter
     deleteLetter() {
+
         // find the last hidden tile with a letter on it
         for (let i = this.solution.length - 1; i >= 0; i--) {
-            if (this.solution[i].match("[A-Z]")) {
-                const tile = document.getElementById(i.toString());
-
-                // remove the letter from the tile
-                if (tile.classList.contains("tile-unsolved") && tile.textContent !== "\u00A0") {
-                    tile.textContent = "\u00A0";
-                    break;
-                }
+            if (this.solutionTiles[i] && this.solutionTiles[i].classList.contains("tile-unsolved") && this.solutionTiles[i].textContent !== EMPTY) {
+                this.solutionTiles[i].textContent = EMPTY;
+                break;
             }
         }
     }
@@ -197,12 +194,12 @@ document.getElementById("backspace").addEventListener("click", () => {puzzle.del
 // initialize event listeners for keyboard typing
 addEventListener("keydown", (e) => {
     // if a single letter is pressed, sketch it in
-    if (e.key.length === 1 && e.key.match("[a-zA-Z]")) {
+    if (!e.ctrlKey && e.key.length === 1 && e.key.match("[a-zA-Z]")) {
         puzzle.sketchLetter(e.key.toUpperCase());
     }
 
     // if the backspace key is pressed, delete a sketched letter
-    else if (e.key === "Backspace") {
+    else if (!e.ctrlKey && e.key === "Backspace") {
         puzzle.deleteLetter();
     }
 });
