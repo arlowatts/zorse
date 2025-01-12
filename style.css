@@ -1,6 +1,7 @@
 p {
     font-weight: bold;
     font-size: 25px;
+
     -webkit-user-select: none;
     user-select: none;
 }
@@ -8,21 +9,25 @@ p {
 span.tile {
     width: 1.1em;
     height: 1.5em;
+
     line-height: 1.3em;
     text-align: center;
+
     display: inline-block;
+
     border-radius: 0.2em;
     border-style: solid;
     border-width: 0.1em;
 }
 
 span.tile-solved {
-    background: #B8CCA0;
-    border-color: #BBD0AA;
+    background-color: #B8CCA0;
+    border-color: #B8CCA0;
 }
 
 span.tile-unsolved {
-    background: none;
+    background-color: none;
     border-color: #EEEEEE;
+
     cursor: pointer;
 }

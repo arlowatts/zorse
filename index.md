@@ -1,9 +1,9 @@
 <link rel="stylesheet" href="style.css">
 
-<div style="text-align: center;">
+<div style="text-align: center; touch-action: manipulation;">
     <p id="puzzle-clue"></p>
-    <p id="puzzle-solution" style="cursor: default;"></p>
-    <p id="keyboard" style="cursor: default;">
+    <p id="puzzle-solution"></p>
+    <p id="keyboard">
         <span id="Q" class="tile tile-unsolved">Q</span>
         <span id="W" class="tile tile-unsolved">W</span>
         <span id="E" class="tile tile-unsolved">E</span>
@@ -32,7 +32,7 @@
         <span id="B" class="tile tile-unsolved">B</span>
         <span id="N" class="tile tile-unsolved">N</span>
         <span id="M" class="tile tile-unsolved">M</span>
-        <span id="backspace" class="tile tile-unsolved" style="width: auto;">&#x232b;</span>
+        <span id="backspace" class="tile tile-unsolved" style="width: auto;">&#x232B;</span>
     </p>
 </div>
 
