@@ -9,7 +9,6 @@ span.letter {
 
 span.letter-solved {
     background: #EEEEEE;
-    cursor: default;
 }
 
 span.letter-unsolved {

@@ -17,10 +17,74 @@ class Puzzle {
     // a string indicating which letters in the solution are revealed
     letters;
 
+    // HTML element displaying the clue
+    clueElement;
+
+    // HTML element displaying the solution
+    solutionElement;
+
     constructor(clue, solution, letters) {
         this.clue     = clue.toUpperCase();
         this.solution = solution.toUpperCase();
         this.letters  = letters.toUpperCase();
+    }
+
+    setClueElement(clueElement) {
+        this.clueElement = clueElement;
+    }
+
+    setSolutionElement(solutionElement) {
+        this.solutionElement = solutionElement;
+    }
+
+    // load the puzzle clue into the clue element
+    initializeClueElement() {
+        this.clueElement.textContent = this.clue;
+    }
+
+    // set up the blank tiles in the solution element
+    initializeSolutionElement() {
+        for (let i = 0; i < this.solution.length; i++) {
+
+            // add an empty space where there is a space in the solution
+            if (this.solution[i].match(" ")) {
+                this.solutionElement.insertAdjacentHTML("beforeend", "&emsp;");
+            }
+
+            // add a button where there is a letter in the solution
+            else if (this.solution[i].match("[A-Z]")) {
+                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\" class=\"letter letter-unsolved\">_</span>");
+            }
+
+            // add a non-clickable character if it is neither a space nor a letter
+            else {
+                this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\"></span>");
+                document.getElementById(i.toString()).textContent = this.solution[i];
+            }
+
+            // add a small space between elements
+            this.solutionElement.insertAdjacentHTML("beforeend", "&hairsp;");
+        }
+
+        this.revealLetters();
+    }
+
+    // update tiles to reveal letters
+    revealLetters() {
+        for (let i = 0; i < this.solution.length; i++) {
+
+            // reveal tiles which appear in the list of shown letters
+            if (this.letters.indexOf(this.solution[i]) > -1) {
+                const letter = document.getElementById(i.toString());
+
+                // update the display and content of the tile
+                if (letter.classList.contains("letter-unsolved")) {
+                    letter.textContent = puzzle.solution[i];
+                    letter.classList.remove("letter-unsolved");
+                    letter.classList.add("letter-solved");
+                }
+            }
+        }
     }
 
     // create a puzzle from an encoded string
@@ -64,42 +128,9 @@ const searchParams = new URLSearchParams(window.location.search);
 const puzzle = Puzzle.fromEncodedString(searchParams.get(SEARCH_PARAM_NAME));
 
 // get references to the elements displaying the clue and the solution
-const clueLine = document.getElementById("puzzle-clue");
-const solutionLine = document.getElementById("puzzle-solution");
+puzzle.setClueElement(document.getElementById("puzzle-clue"));
+puzzle.setSolutionElement(document.getElementById("puzzle-solution"));
 
-// set the clue element to display the puzzle's clue
-clueLine.textContent = puzzle.clue;
-
-// set the solution element to display the puzzle's solution
-for (let i = 0; i < puzzle.solution.length; i++) {
-
-    // add an empty space where there is a space in the solution
-    if (puzzle.solution[i].match(" ")) {
-        solutionLine.insertAdjacentHTML("beforeend", "&emsp;");
-    }
-
-    // add a button where there is a letter in the solution
-    else if (puzzle.solution[i].match("[A-Z]")) {
-        solutionLine.insertAdjacentHTML("beforeend", "<span class=\"letter letter-unsolved\" id=\"" + i.toString() + "\">_</span>");
-    }
-
-    // add a non-clickable character if it is neither a space nor a letter
-    else {
-        solutionLine.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\"></span>");
-    }
-
-    // add a small space between elements
-    solutionLine.insertAdjacentHTML("beforeend", "&hairsp;");
-
-    // display the character if it has been revealed or if it is not a letter or a space
-    if (puzzle.letters.indexOf(puzzle.solution[i]) > -1 || !puzzle.solution[i].match("[ A-Z]")) {
-        const letter = document.getElementById(i.toString());
-
-        letter.textContent = puzzle.solution[i];
-
-        if (letter.classList.contains("letter-unsolved")) {
-            letter.classList.remove("letter-unsolved");
-            letter.classList.add("letter-solved");
-        }
-    }
-}
+// initialize the puzzle display
+puzzle.initializeClueElement();
+puzzle.initializeSolutionElement();
