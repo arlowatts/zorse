@@ -54,11 +54,17 @@ class Puzzle {
             // add a button where there is a letter in the solution
             else if (this.solution[i].match("[A-Z]")) {
                 this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\" class=\"letter letter-unsolved\">_</span>");
+
+                // set the onclick function to reveal letters when the tile is clicked
+                const puzzle = this;
+                document.getElementById(i.toString()).onclick = function() {puzzle.addLetter(puzzle.solution[i]);};
             }
 
             // add a non-clickable character if it is neither a space nor a letter
             else {
                 this.solutionElement.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\"></span>");
+
+                // set the character using textContent to avoid needing to escape it
                 document.getElementById(i.toString()).textContent = this.solution[i];
             }
 
@@ -69,19 +75,33 @@ class Puzzle {
         this.revealLetters();
     }
 
+    // add a letter to the list of revealed letters
+    addLetter(letter) {
+        if (this.letters.indexOf(letter) === -1) {
+            this.letters += letter;
+            this.revealLetters();
+        }
+    }
+
     // update tiles to reveal letters
     revealLetters() {
         for (let i = 0; i < this.solution.length; i++) {
 
             // reveal tiles which appear in the list of shown letters
             if (this.letters.indexOf(this.solution[i]) > -1) {
-                const letter = document.getElementById(i.toString());
+                const tile = document.getElementById(i.toString());
 
-                // update the display and content of the tile
-                if (letter.classList.contains("letter-unsolved")) {
-                    letter.textContent = puzzle.solution[i];
-                    letter.classList.remove("letter-unsolved");
-                    letter.classList.add("letter-solved");
+                if (tile.classList.contains("letter-unsolved")) {
+
+                    // update the content of the tile
+                    tile.textContent = puzzle.solution[i];
+
+                    // update the display of the tile
+                    tile.classList.remove("letter-unsolved");
+                    tile.classList.add("letter-solved");
+
+                    // update the onclick function of the tile
+                    tile.onclick = null;
                 }
             }
         }
