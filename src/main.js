@@ -75,17 +75,17 @@ for (let i = 0; i < puzzle.solution.length; i++) {
 
     // add an empty space where there is a space in the solution
     if (puzzle.solution[i].match(" ")) {
-        solutionLine.insertAdjacentHTML("beforeend", "&ensp;");
+        solutionLine.insertAdjacentHTML("beforeend", "&emsp;");
     }
 
     // add a button where there is a letter in the solution
     else if (puzzle.solution[i].match("[A-Z]")) {
-        solutionLine.insertAdjacentHTML("beforeend", "<div class=\"letter-unsolved\" id=\"" + i.toString() + "\">_</div>");
+        solutionLine.insertAdjacentHTML("beforeend", "<span class=\"letter letter-unsolved\" id=\"" + i.toString() + "\">_</span>");
     }
 
     // add a non-clickable character if it is neither a space nor a letter
     else {
-        solutionLine.insertAdjacentHTML("beforeend", "<p style=\"display: inline;\" id=\"" + i.toString() + "\"></p>");
+        solutionLine.insertAdjacentHTML("beforeend", "<span id=\"" + i.toString() + "\"></span>");
     }
 
     // add a small space between elements
@@ -93,6 +93,13 @@ for (let i = 0; i < puzzle.solution.length; i++) {
 
     // display the character if it has been revealed or if it is not a letter or a space
     if (puzzle.letters.indexOf(puzzle.solution[i]) > -1 || !puzzle.solution[i].match("[ A-Z]")) {
-        document.getElementById(i.toString()).textContent = puzzle.solution[i];
+        const letter = document.getElementById(i.toString());
+
+        letter.textContent = puzzle.solution[i];
+
+        if (letter.classList.contains("letter-unsolved")) {
+            letter.classList.remove("letter-unsolved");
+            letter.classList.add("letter-solved");
+        }
     }
 }

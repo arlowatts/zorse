@@ -1,8 +1,22 @@
-.letter-unsolved {
-    width: 2em;
-    height: 3em;
-    display: inline;
+span.letter {
+    width: 1em;
+    height: 1.5em;
+    line-height: 1.5em;
     text-align: center;
+    display: inline-block;
     border-radius: 0.2em;
+}
+
+span.letter-solved {
+    background: #EEEEEE;
+    cursor: default;
+}
+
+span.letter-unsolved {
     background: #BBEECC;
+    cursor: pointer;
+}
+
+span.letter-unsolved:hover {
+    background: #B0E0C0;
 }
