@@ -4,7 +4,7 @@ const BACKSPACE_HTML = "&#x232B;";
 
 // id and display for the submit button
 const SUBMIT_ID = "ENTER";
-const SUBMIT_HTML = "&emsp;Submit&emsp;";
+const SUBMIT_HTML = "Submit";
 
 // HTML for line breaks
 const LINE_BREAK_HTML = "<br />";
