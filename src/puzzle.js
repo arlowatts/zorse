@@ -14,12 +14,6 @@ const HTML_LETTER_GAP = "&hairsp;";
 // default character used in empty tiles
 const EMPTY_TILE = "\u00A0";
 
-// escape codes for dangerous characters
-const ESCAPE_CODES = {
-    "&": "&amp;",
-    "<": "&lt;",
-};
-
 export class Puzzle {
     // elements of the puzzle
     #clue;
@@ -71,7 +65,7 @@ export class Puzzle {
 
             // add a non-clickable character where there is a special character in the solution
             else {
-                solutionElement.insertAdjacentHTML("beforeend", `${ESCAPE_CODES[this.#solution[i]] || this.#solution[i]}`);
+                solutionElement.insertAdjacentText("beforeend", this.#solution[i]);
             }
 
             // add a small space between elements
@@ -79,6 +73,11 @@ export class Puzzle {
         }
 
         this.revealLetter();
+    }
+
+    // set a function that is invoked when tiles are revealed
+    setTriggerOnReveal(f) {
+        this.#triggerOnReveal = f;
     }
 
     // add a letter to the list of revealed letters
@@ -93,14 +92,7 @@ export class Puzzle {
 
     // update tiles to reveal letters
     revealLetter() {
-
-        // invoke the custom function if it exists and pass it the revealed letters
-        if (this.#triggerOnReveal) {
-            this.#triggerOnReveal(this.#letters);
-        }
-
         for (let i = 0; i < this.#solution.length; i++) {
-
             if (this.#solutionTiles[i]) {
 
                 // reveal tiles which appear in the list of shown letters
@@ -123,11 +115,11 @@ export class Puzzle {
                 }
             }
         }
-    }
 
-    // set a function that is invoked when tiles are revealed
-    setTriggerOnReveal(f) {
-        this.#triggerOnReveal = f;
+        // invoke the custom function if it exists and pass it the revealed letters
+        if (this.#triggerOnReveal) {
+            this.#triggerOnReveal(this.#letters);
+        }
     }
 
     // add a letter to the first hidden tile
@@ -162,10 +154,14 @@ export class Puzzle {
     submitAnswer() {
         let correct = true;
 
+        // lock each tile
         for (let i = 0; i < this.#solution.length; i++) {
             if (this.#solutionTiles[i]) {
+
+                // update the display of each tile
                 this.#solutionTiles[i].classList.remove("tile-unsolved");
 
+                // make the tile solved if the letter is right, or incorrect if the letter is wrong
                 if (this.#solutionTiles[i].textContent === this.#solution[i]) {
                     this.#solutionTiles[i].classList.add("tile-solved");
                 }
@@ -174,6 +170,7 @@ export class Puzzle {
                     correct = false;
                 }
 
+                // remove the tile from the dictionary of tiles
                 this.#solutionTiles[i] = undefined;
             }
         }

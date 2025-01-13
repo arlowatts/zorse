@@ -1,10 +1,13 @@
 // id and HTML unicode for the backspace key
-const BACKSPACE_ID = "Backspace";
+const BACKSPACE_ID = "BACKSPACE";
 const BACKSPACE_HTML = "&#x232B;";
 
 // id and display for the submit button
-const SUBMIT_ID = "Enter";
+const SUBMIT_ID = "ENTER";
 const SUBMIT_HTML = "&emsp;Submit&emsp;";
+
+// HTML for line breaks
+const LINE_BREAK_HTML = "<br />";
 
 export class Keyboard {
     // the arrangement of the keyboard
@@ -18,15 +21,31 @@ export class Keyboard {
         this.#keyboardTiles = {};
     }
 
+    // permanently block keys from being clicked or typed
+    blockKeys(keys) {
+        for (let i = 0; i < keys.length; i++) {
+            if (this.#keyboardTiles[keys[i]]) {
+
+                // update the display of the tile
+                this.#keyboardTiles[keys[i]].classList.remove("tile-unsolved");
+                this.#keyboardTiles[keys[i]].classList.add("tile-solved");
+
+                // remove the tile from the dictionary of tiles
+                this.#keyboardTiles[keys[i]] = undefined;
+            }
+        }
+    }
+
     // create the key tiles for the on-screen keyboard
     initializeKeyboardElement(keyboardElement) {
 
-        // iterate over every key in the layout
+        // iterate over every row in the layout
         for (let i = 0; i < this.#layout.length; i++) {
 
             // add a line break between rows of the keyboard
-            keyboardElement.insertAdjacentHTML("beforeend", "<br />");
+            keyboardElement.insertAdjacentHTML("beforeend", LINE_BREAK_HTML);
 
+            // iterate over every key in the row
             for (let j = 0; j < this.#layout[i].length; j++) {
                 const key = this.#layout[i][j];
 
@@ -40,89 +59,53 @@ export class Keyboard {
 
         // add a special backspace tile
         keyboardElement.insertAdjacentHTML("beforeend", `<span id="${BACKSPACE_ID}" class="tile tile-unsolved" style="width: auto;">${BACKSPACE_HTML}</span>`);
-
-        // save the reference to the backspace tile
         this.#keyboardTiles[BACKSPACE_ID] = document.getElementById(BACKSPACE_ID);
 
         // add a special submit button after a line break
-        keyboardElement.insertAdjacentHTML("beforeend", "<br />");
+        keyboardElement.insertAdjacentHTML("beforeend", LINE_BREAK_HTML);
         keyboardElement.insertAdjacentHTML("beforeend", `<span id="${SUBMIT_ID}" class="tile tile-unsolved" style="width: auto;">${SUBMIT_HTML}</span>`);
-
-        // save the reference to the submit button
         this.#keyboardTiles[SUBMIT_ID] = document.getElementById(SUBMIT_ID);
     }
 
     // create the event listeners for both the on-screen keyboard and keydown events
     initializeEventListeners(puzzle) {
-
-        // set the puzzle to block keys that are revealed
         const keyboard = this;
-        puzzle.setTriggerOnReveal((keys) => { keyboard.blockKeys(keys); });
-        puzzle.revealLetter();
 
         // iterate over every key in the layout
-        for (let i = 0; i < this.#layout.length; i++) {
-            for (let j = 0; j < this.#layout[i].length; j++) {
-                const key = this.#layout[i][j];
+        for (const [key, tile] of Object.entries(this.#keyboardTiles)) {
 
-                // add an event listener to sketch a letter when the tile is clicked
-                const keyboard = this;
-
-                if (this.#keyboardTiles[key]) {
-                    this.#keyboardTiles[key].addEventListener("click", () => {
-                        if (keyboard.#keyboardTiles[key]) {
-                            puzzle.sketchLetter(key);
-                        }
-                    });
-                }
-            }
+            // add an event listener to each tile
+            tile.addEventListener("click", () => { Keyboard.handleKeydown(keyboard, puzzle, key); });
         }
 
-        // add an event listener for the special backspace key
-        this.#keyboardTiles[BACKSPACE_ID].addEventListener("click", () => { puzzle.deleteLetter(); });
+        // add an event listener to detect keydown events
+        addEventListener("keydown", (e) => { Keyboard.handleKeydown(keyboard, puzzle, e.key.toUpperCase()); });
 
-        // add an event listened for the submit button
-        this.#keyboardTiles[SUBMIT_ID].addEventListener("click", () => {
-            if (keyboard.#keyboardTiles[SUBMIT_ID]) {
-                puzzle.submitAnswer();
-                keyboard.blockKeys([SUBMIT_ID]);
-            }
-        });
+        // set the puzzle to block keys that are revealed
+        puzzle.setTriggerOnReveal((keys) => { keyboard.blockKeys(keys); });
 
-        // add an event listener to sketch a letter when a key is pressed
-        addEventListener("keydown", (e) => {
-            if (!e.ctrlKey) {
-
-                // add a condition for the special backspace key
-                if (e.key === BACKSPACE_ID && this.#keyboardTiles[BACKSPACE_ID]) {
-                    puzzle.deleteLetter();
-                }
-
-                // add a condition for the submit button
-                else if (e.key === SUBMIT_ID && this.#keyboardTiles[SUBMIT_ID]) {
-                    puzzle.submitAnswer();
-                    this.blockKeys([SUBMIT_ID]);
-                }
-
-                // check that the key has a tile
-                else if (this.#keyboardTiles[e.key] || this.#keyboardTiles[e.key.toUpperCase()]) {
-                    puzzle.sketchLetter(e.key.toUpperCase());
-                }
-            }
-        });
+        // force the puzzle to trigger the function right away
+        puzzle.revealLetter();
     }
 
-    // permanently block keys from being clicked or typed
-    blockKeys(keys) {
-        for (let i = 0; i < keys.length; i++) {
-            if (this.#keyboardTiles[keys[i]]) {
+    // handle a keydown event
+    static handleKeydown(keyboard, puzzle, key) {
+        if (keyboard.#keyboardTiles[key]) {
 
-                // update the display of the tile
-                this.#keyboardTiles[keys[i]].classList.remove("tile-unsolved");
-                this.#keyboardTiles[keys[i]].classList.add("tile-solved");
+            // if the backspace key is pressed, delete a sketched letter from the puzzle
+            if (key === BACKSPACE_ID) {
+                puzzle.deleteLetter();
+            }
 
-                // remove the tile from the dictionary of tiles
-                this.#keyboardTiles[keys[i]] = undefined;
+            // if the submit button is pressed, submit the puzzle and block all keys
+            else if (key === SUBMIT_ID) {
+                keyboard.blockKeys(Object.getOwnPropertyNames(keyboard.#keyboardTiles));
+                puzzle.submitAnswer();
+            }
+
+            // if any other key is pressed, sketch it in the puzzle
+            else {
+                puzzle.sketchLetter(key.toUpperCase());
             }
         }
     }
