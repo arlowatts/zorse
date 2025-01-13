@@ -21,7 +21,7 @@ const encodedPuzzle = {
 // decode the puzzle or use the fallback if decoding fails
 let puzzle;
 try { puzzle = Puzzle.decode(encodedPuzzle); }
-catch { puzzle = new Puzzle("The anthem for a 24-hour drive with 30 passengers", "The wheels on the bus go round and round the clock", "wkul"); }
+catch { puzzle = new Puzzle("Staring contest, for one", "Eye contact sport", "n"); }
 
 // initialize the puzzle display
 puzzle.initializeClueElement(document.getElementById("puzzle-clue"));
