@@ -21,15 +21,15 @@ span.tile {
 }
 
 span.tile-large {
-    width: 1.5em;
+    width: 10%;
 }
 
-span.tile-large-large {
-    width: 3em;
+span.tile-x-large {
+    width: 20%;
 }
 
-span.tile-auto {
-    width: auto;
+span.tile-xx-large {
+    width: 50%;
 }
 
 span.tile-solved {

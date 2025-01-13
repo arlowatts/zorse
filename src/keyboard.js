@@ -58,12 +58,12 @@ export class Keyboard {
         }
 
         // add a special backspace tile
-        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${BACKSPACE_ID}" class="tile tile-large-large tile-unsolved">${BACKSPACE_HTML}</span>`);
+        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${BACKSPACE_ID}" class="tile tile-x-large tile-unsolved">${BACKSPACE_HTML}</span>`);
         this.#keyboardTiles[BACKSPACE_ID] = document.getElementById(BACKSPACE_ID);
 
         // add a special submit button after a line break
         keyboardElement.insertAdjacentHTML("beforeend", LINE_BREAK_HTML);
-        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${SUBMIT_ID}" class="tile tile-auto tile-unsolved">${SUBMIT_HTML}</span>`);
+        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${SUBMIT_ID}" class="tile tile-xx-large tile-unsolved">${SUBMIT_HTML}</span>`);
         this.#keyboardTiles[SUBMIT_ID] = document.getElementById(SUBMIT_ID);
     }
 
