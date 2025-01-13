@@ -2,6 +2,10 @@
 const BACKSPACE_ID = "Backspace";
 const BACKSPACE_HTML = "&#x232B;";
 
+// id and display for the submit button
+const SUBMIT_ID = "Enter";
+const SUBMIT_HTML = "&emsp;Submit&emsp;";
+
 export class Keyboard {
     // the arrangement of the keyboard
     #layout;
@@ -39,6 +43,13 @@ export class Keyboard {
 
         // save the reference to the backspace tile
         this.#keyboardTiles[BACKSPACE_ID] = document.getElementById(BACKSPACE_ID);
+
+        // add a special submit button after a line break
+        keyboardElement.insertAdjacentHTML("beforeend", "<br />");
+        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${SUBMIT_ID}" class="tile tile-unsolved" style="width: auto;">${SUBMIT_HTML}</span>`);
+
+        // save the reference to the submit button
+        this.#keyboardTiles[SUBMIT_ID] = document.getElementById(SUBMIT_ID);
     }
 
     // create the event listeners for both the on-screen keyboard and keydown events
@@ -70,17 +81,33 @@ export class Keyboard {
         // add an event listener for the special backspace key
         this.#keyboardTiles[BACKSPACE_ID].addEventListener("click", () => { puzzle.deleteLetter(); });
 
+        // add an event listened for the submit button
+        this.#keyboardTiles[SUBMIT_ID].addEventListener("click", () => {
+            if (keyboard.#keyboardTiles[SUBMIT_ID]) {
+                puzzle.submitAnswer();
+                keyboard.blockKeys([SUBMIT_ID]);
+            }
+        });
+
         // add an event listener to sketch a letter when a key is pressed
         addEventListener("keydown", (e) => {
+            if (!e.ctrlKey) {
 
-            // check that the control key is not pressed and that the key has a tile
-            if (!e.ctrlKey && (this.#keyboardTiles[e.key] || this.#keyboardTiles[e.key.toUpperCase()])) {
-                puzzle.sketchLetter(e.key.toUpperCase());
-            }
+                // add a condition for the special backspace key
+                if (e.key === BACKSPACE_ID && this.#keyboardTiles[BACKSPACE_ID]) {
+                    puzzle.deleteLetter();
+                }
 
-            // add a condition for the special backspace key
-            if (!e.ctrlKey && e.key === BACKSPACE_ID && this.#keyboardTiles[BACKSPACE_ID]) {
-                puzzle.deleteLetter();
+                // add a condition for the submit button
+                else if (e.key === SUBMIT_ID && this.#keyboardTiles[SUBMIT_ID]) {
+                    puzzle.submitAnswer();
+                    this.blockKeys([SUBMIT_ID]);
+                }
+
+                // check that the key has a tile
+                else if (this.#keyboardTiles[e.key] || this.#keyboardTiles[e.key.toUpperCase()]) {
+                    puzzle.sketchLetter(e.key.toUpperCase());
+                }
             }
         });
     }

@@ -158,6 +158,34 @@ export class Puzzle {
         }
     }
 
+    // test all sketched letters in the puzzle
+    submitAnswer() {
+        let correct = true;
+
+        for (let i = 0; i < this.#solution.length; i++) {
+            if (this.#solutionTiles[i]) {
+                this.#solutionTiles[i].classList.remove("tile-unsolved");
+
+                if (this.#solutionTiles[i].textContent === this.#solution[i]) {
+                    this.#solutionTiles[i].classList.add("tile-solved");
+                }
+                else {
+                    this.#solutionTiles[i].classList.add("tile-incorrect");
+                    correct = false;
+                }
+
+                this.#solutionTiles[i] = undefined;
+            }
+        }
+
+        if (correct) {
+            alert(`You win!\n${this.#solution}`);
+        }
+        else {
+            alert(`Better luck next time...\n${this.#solution}`);
+        }
+    }
+
     // encode the puzzle as three url-safe base64 strings
     static encode(puzzle) {
         const encoder = new TextEncoder();

@@ -31,3 +31,8 @@ span.tile-unsolved {
 
     cursor: pointer;
 }
+
+span.tile-incorrect {
+    background-color: #EEAAAA;
+    border-color: #EEAAAA;
+}
