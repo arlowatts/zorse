@@ -50,7 +50,7 @@ export class Keyboard {
                 const key = this.#layout[i][j];
 
                 // create a tile for each key
-                keyboardElement.insertAdjacentHTML("beforeend", `<span id="${key}" class="tile tile-unsolved">${key}</span>`);
+                keyboardElement.insertAdjacentHTML("beforeend", `<span id="${key}" class="tile tile-large tile-unsolved">${key}</span>`);
 
                 // save the reference to the tile
                 this.#keyboardTiles[key] = document.getElementById(key);
@@ -58,12 +58,12 @@ export class Keyboard {
         }
 
         // add a special backspace tile
-        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${BACKSPACE_ID}" class="tile tile-unsolved" style="width: auto;">${BACKSPACE_HTML}</span>`);
+        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${BACKSPACE_ID}" class="tile tile-large-large tile-unsolved">${BACKSPACE_HTML}</span>`);
         this.#keyboardTiles[BACKSPACE_ID] = document.getElementById(BACKSPACE_ID);
 
         // add a special submit button after a line break
         keyboardElement.insertAdjacentHTML("beforeend", LINE_BREAK_HTML);
-        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${SUBMIT_ID}" class="tile tile-unsolved" style="width: auto;">${SUBMIT_HTML}</span>`);
+        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${SUBMIT_ID}" class="tile tile-auto tile-unsolved">${SUBMIT_HTML}</span>`);
         this.#keyboardTiles[SUBMIT_ID] = document.getElementById(SUBMIT_ID);
     }
 

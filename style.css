@@ -20,6 +20,18 @@ span.tile {
     border-width: 0.1em;
 }
 
+span.tile-large {
+    width: 1.5em;
+}
+
+span.tile-large-large {
+    width: 3em;
+}
+
+span.tile-auto {
+    width: auto;
+}
+
 span.tile-solved {
     background-color: #B8CCA0;
     border-color: #B8CCA0;
