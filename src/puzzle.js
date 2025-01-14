@@ -69,7 +69,7 @@ export class Puzzle {
 
                 // add a smaller space between tiles
                 else {
-                    solutionElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
+                    wordElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
                 }
 
                 // add a tile where there is a letter in the solution
