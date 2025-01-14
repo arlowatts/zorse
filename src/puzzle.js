@@ -8,7 +8,7 @@ const LETTER_SPACE = "^ $";
 const LETTER_TILE = "^[A-Z]$";
 
 // HTML for gaps
-const HTML_WORD_GAP = "&emsp;";
+const HTML_WORD_GAP = "&ensp;";
 const HTML_LETTER_GAP = "&hairsp;";
 
 // default character used in empty tiles
@@ -45,23 +45,31 @@ export class Puzzle {
 
         for (let i = 0; i < this.#solution.length; i++) {
 
-            // add a gap where there is a space in the solution
-            if (this.#solution[i].match(LETTER_SPACE)) {
-
-                // signal that the end of a word was reached
-                if (wordElement) {
-                    wordElement = null;
-                }
+            // add a gap between words
+            if (this.#solution[i].match(LETTER_SPACE) && wordElement) {
 
                 // add the HTML for a gap
-                solutionElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
+                wordElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
+
+                // signal that the end of a word was reached
+                wordElement = null;
             }
             else {
 
-                // create a div to group tiles by word
+                // add a gap between words
                 if (!wordElement) {
+
+                    // create a div to group tiles by word
                     solutionElement.insertAdjacentHTML("beforeend", `<div id="word-${i}" class="word"></div>`);
                     wordElement = document.getElementById(`word-${i}`);
+
+                    // add the HTML for a gap
+                    wordElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
+                }
+
+                // add a smaller space between tiles
+                else {
+                    solutionElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
                 }
 
                 // add a tile where there is a letter in the solution
@@ -85,12 +93,9 @@ export class Puzzle {
                 else {
 
                     // add the special character directly as text
-                    solutionElement.insertAdjacentText("beforeend", this.#solution[i]);
+                    wordElement.insertAdjacentText("beforeend", this.#solution[i]);
                 }
             }
-
-            // add a small space between elements
-            solutionElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
         }
 
         this.revealLetter();
