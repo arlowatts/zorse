@@ -41,15 +41,31 @@ export class Puzzle {
 
     // set up the blank tiles in the solution element
     initializeSolutionElement(solutionElement) {
+        let inWord = false;
+
         for (let i = 0; i < this.#solution.length; i++) {
 
             // add a gap where there is a space in the solution
             if (this.#solution[i].match(LETTER_SPACE)) {
+
+                // add closing div tags to group tiles by word
+                if (inWord) {
+                    solutionElement.insertAdjacentHTML("beforeend", "</div>");
+                    inWord = false;
+                }
+
                 solutionElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
             }
 
             // add a tile where there is a letter in the solution
             else if (this.#solution[i].match(LETTER_TILE)) {
+
+                // add opening div tags to group tiles by word
+                if (!inWord) {
+                    solutionElement.insertAdjacentHTML("beforeend", "<div>");
+                    inWord = true;
+                }
+
                 solutionElement.insertAdjacentHTML("beforeend", `<span id="${i}" class="tile tile-unsolved"></span>`);
 
                 // save the reference to the tile
@@ -70,6 +86,12 @@ export class Puzzle {
 
             // add a small space between elements
             solutionElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
+        }
+
+        // add closing div tags to group tiles by word
+        if (inWord) {
+            solutionElement.insertAdjacentHTML("beforeend", "</div>");
+            inWord = false;
         }
 
         this.revealLetter();
