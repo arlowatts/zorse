@@ -41,57 +41,56 @@ export class Puzzle {
 
     // set up the blank tiles in the solution element
     initializeSolutionElement(solutionElement) {
-        let inWord = false;
+        let wordElement = null;
 
         for (let i = 0; i < this.#solution.length; i++) {
 
             // add a gap where there is a space in the solution
             if (this.#solution[i].match(LETTER_SPACE)) {
 
-                // add closing div tags to group tiles by word
-                if (inWord) {
-                    solutionElement.insertAdjacentHTML("beforeend", "</div>");
-                    inWord = false;
+                // signal that the end of a word was reached
+                if (wordElement) {
+                    wordElement = null;
                 }
 
+                // add the HTML for a gap
                 solutionElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
             }
+            else {
 
-            // add a tile where there is a letter in the solution
-            else if (this.#solution[i].match(LETTER_TILE)) {
-
-                // add opening div tags to group tiles by word
-                if (!inWord) {
-                    solutionElement.insertAdjacentHTML("beforeend", "<div>");
-                    inWord = true;
+                // create a div to group tiles by word
+                if (!wordElement) {
+                    solutionElement.insertAdjacentHTML("beforeend", `<div id="word-${i}" class="word"></div>`);
+                    wordElement = document.getElementById(`word-${i}`);
                 }
 
-                solutionElement.insertAdjacentHTML("beforeend", `<span id="${i}" class="tile tile-unsolved"></span>`);
+                // add a tile where there is a letter in the solution
+                if (this.#solution[i].match(LETTER_TILE)) {
 
-                // save the reference to the tile
-                this.#solutionTiles[i] = document.getElementById(i);
+                    // add the HTML for a tile
+                    wordElement.insertAdjacentHTML("beforeend", `<span id="${i}" class="tile tile-unsolved"></span>`);
 
-                // set the tile to contain an empty character to preserve consistent formatting
-                this.#solutionTiles[i].textContent = EMPTY_TILE;
+                    // save the reference to the tile
+                    this.#solutionTiles[i] = document.getElementById(i);
 
-                // add an event listener to reveal letters when the tile is clicked
-                const puzzle = this;
-                this.#solutionTiles[i].addEventListener("click", () => { puzzle.addLetter(puzzle.#solution[i]); });
-            }
+                    // set the tile to contain an empty character to preserve consistent formatting
+                    this.#solutionTiles[i].textContent = EMPTY_TILE;
 
-            // add a non-clickable character where there is a special character in the solution
-            else {
-                solutionElement.insertAdjacentText("beforeend", this.#solution[i]);
+                    // add an event listener to reveal letters when the tile is clicked
+                    const puzzle = this;
+                    this.#solutionTiles[i].addEventListener("click", () => { puzzle.addLetter(puzzle.#solution[i]); });
+                }
+
+                // add a non-clickable character where there is a special character in the solution
+                else {
+
+                    // add the special character directly as text
+                    solutionElement.insertAdjacentText("beforeend", this.#solution[i]);
+                }
             }
 
             // add a small space between elements
             solutionElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
-        }
-
-        // add closing div tags to group tiles by word
-        if (inWord) {
-            solutionElement.insertAdjacentHTML("beforeend", "</div>");
-            inWord = false;
         }
 
         this.revealLetter();

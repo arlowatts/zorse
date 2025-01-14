@@ -6,6 +6,10 @@ p {
     user-select: none;
 }
 
+div.word {
+    display: inline-block;
+}
+
 span.tile {
     width: 1.2em;
     height: 1.5em;
