@@ -43,10 +43,10 @@ export class Puzzle {
     initializeSolutionElement(solutionElement) {
         let wordElement = null;
 
-        for (let i = 0; i < this.#solution.length; i++) {
+        for (let i = 0; i <= this.#solution.length; i++) {
 
-            // add a gap between words
-            if (this.#solution[i].match(LETTER_SPACE) && wordElement) {
+            // add a gap between words, and at the end of the last word for balance
+            if (i >= this.#solution.length || this.#solution[i].match(LETTER_SPACE) && wordElement) {
 
                 // add the HTML for a gap
                 wordElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
