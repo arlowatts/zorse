@@ -37,18 +37,21 @@ span.tile-xx-large {
 }
 
 span.tile-solved {
-    background-color: #B8CCA0;
     border-color: #B8CCA0;
+    background-color: #B8CCA0;
 }
 
 span.tile-unsolved {
-    background-color: none;
     border-color: #EEEEEE;
-
     cursor: pointer;
 }
 
 span.tile-incorrect {
-    background-color: #EEAAAA;
     border-color: #EEAAAA;
+    background-color: #EEAAAA;
+}
+
+span.tile-locked {
+    border-color: #EEEEEE;
+    color: #EEEEEE;
 }

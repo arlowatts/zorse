@@ -21,14 +21,14 @@ export class Keyboard {
         this.#keyboardTiles = {};
     }
 
-    // permanently block keys from being clicked or typed
-    blockKeys(keys) {
+    // permanently lock keys to prevent them from being clicked or typed
+    lockKeys(keys) {
         for (let i = 0; i < keys.length; i++) {
             if (this.#keyboardTiles[keys[i]]) {
 
                 // update the display of the tile
                 this.#keyboardTiles[keys[i]].classList.remove("tile-unsolved");
-                this.#keyboardTiles[keys[i]].classList.add("tile-solved");
+                this.#keyboardTiles[keys[i]].classList.add("tile-locked");
 
                 // remove the tile from the dictionary of tiles
                 this.#keyboardTiles[keys[i]] = undefined;
@@ -81,8 +81,8 @@ export class Keyboard {
         // add an event listener to detect keydown events
         addEventListener("keydown", (e) => { Keyboard.handleKeydown(keyboard, puzzle, e.key.toUpperCase()); });
 
-        // set the puzzle to block keys that are revealed
-        puzzle.setTriggerOnReveal((keys) => { keyboard.blockKeys(keys); });
+        // set the puzzle to lock keys that are revealed
+        puzzle.setTriggerOnReveal((keys) => { keyboard.lockKeys(keys); });
 
         // force the puzzle to trigger the function right away
         puzzle.revealLetter();
@@ -97,9 +97,9 @@ export class Keyboard {
                 puzzle.deleteLetter();
             }
 
-            // if the submit button is pressed, submit the puzzle and block all keys
+            // if the submit button is pressed, submit the puzzle and lock all keys
             else if (key === SUBMIT_ID) {
-                keyboard.blockKeys(Object.getOwnPropertyNames(keyboard.#keyboardTiles));
+                keyboard.lockKeys(Object.getOwnPropertyNames(keyboard.#keyboardTiles));
                 puzzle.submitAnswer();
             }
 
