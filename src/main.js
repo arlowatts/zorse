@@ -21,7 +21,7 @@ const encodedPuzzle = {
 // decode the puzzle or use the fallback if decoding fails
 let puzzle;
 try { puzzle = Puzzle.decode(encodedPuzzle); }
-catch { puzzle = new Puzzle("Staring contest, for one", "Eye contact sport", "n"); }
+catch { puzzle = new Puzzle("the ability to shoot targets with your toes", "trigger happy feet", "t"); }
 
 // initialize the puzzle display
 puzzle.initializeClueElement(document.getElementById("puzzle-clue"));
