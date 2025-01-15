@@ -25,6 +25,9 @@ export class Keyboard {
 
     initializeDisplay(keyboardElement) {
         tileDisplay(keyboardElement, KEYBOARD_LAYOUT, KEYBOARD_CLASSES, this.#refs);
+
+        this.#refs[1][26].style.width = "20%";
+        this.#refs[1][27].style.width = "50%";
     }
 
     initializeEventListeners(puzzle) {
