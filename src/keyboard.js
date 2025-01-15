@@ -37,10 +37,6 @@ export class Keyboard {
             else if (i === 27) {
                 this.#refs[1][i].addEventListener("click", () => {
                     puzzle.checkSolution();
-
-                    for (let i = 0; i < KEYBOARD_LAYOUT_FLAT.length; i++) {
-                        this.blockLetter(KEYBOARD_LAYOUT_FLAT[i]);
-                    }
                 });
             }
             else {
@@ -56,10 +52,6 @@ export class Keyboard {
             }
             else if (e.key === "Enter") {
                 puzzle.checkSolution();
-
-                for (let i = 0; i < KEYBOARD_LAYOUT_FLAT.length; i++) {
-                    this.blockLetter(KEYBOARD_LAYOUT_FLAT[i]);
-                }
             }
             else {
                 puzzle.sketchLetter(e.key.toUpperCase());
@@ -71,6 +63,5 @@ export class Keyboard {
         const ref = this.#refs[1][KEYBOARD_LAYOUT_FLAT.indexOf(letter)];
         ref.classList.remove("open");
         ref.classList.add("locked");
-        ref.outerHTML = ref.outerHTML;
     }
 }

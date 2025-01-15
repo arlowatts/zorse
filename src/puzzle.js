@@ -19,6 +19,8 @@ export class Puzzle {
     #solution;
     #letters;
 
+    #active;
+
     constructor(clue, solution, letters) {
         this.#clue     = clue.toUpperCase();
         this.#solution = solution.toUpperCase();
@@ -27,6 +29,8 @@ export class Puzzle {
         this.#refs = [[], []];
         this.#solutionTiles = this.#solution.replaceAll(REGEX_NOT_TILE, "");
         this.#revealedLetters = "";
+
+        this.#active = true;
     }
 
     // create the letter tiles for the puzzle solution and populate the clue element
@@ -51,7 +55,7 @@ export class Puzzle {
     }
 
     revealLetter(letter) {
-        if (letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
+        if (this.#active && letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
             this.#revealedLetters += letter;
 
             for (let i = 0; i < this.#refs[1].length; i++) {
@@ -68,7 +72,7 @@ export class Puzzle {
     }
 
     sketchLetter(letter) {
-        if (letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
+        if (this.#active && letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
             for (let i = 0; i < this.#refs[1].length; i++) {
                 if (this.#refs[1][i].textContent === "") {
                     this.#refs[1][i].textContent = letter;
@@ -79,15 +83,19 @@ export class Puzzle {
     }
 
     deleteLetter() {
-        for (let i = this.#refs[1].length - 1; i >= 0; i--) {
-            if (this.#revealedLetters.indexOf(this.#solutionTiles[i]) === -1 && this.#refs[1][i].textContent !== "") {
-                this.#refs[1][i].textContent = "";
-                break;
+        if (this.#active) {
+            for (let i = this.#refs[1].length - 1; i >= 0; i--) {
+                if (this.#revealedLetters.indexOf(this.#solutionTiles[i]) === -1 && this.#refs[1][i].textContent !== "") {
+                    this.#refs[1][i].textContent = "";
+                    break;
+                }
             }
         }
     }
 
     checkSolution() {
+        this.#active = false;
+
         let correct = true;
 
         for (let i = 0; i < this.#refs[1].length; i++) {
@@ -100,8 +108,6 @@ export class Puzzle {
                 this.#refs[1][i].classList.add("incorrect");
                 correct = false;
             }
-
-            this.#refs[1][i].outerHTML = this.#refs[1][i].outerHTML;
         }
 
         if (correct) {
