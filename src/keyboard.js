@@ -1,112 +1,76 @@
-// id and HTML unicode for the backspace key
-const BACKSPACE_ID = "BACKSPACE";
-const BACKSPACE_HTML = "&#x232B;";
+import { tileDisplay } from "./tileDisplay.js";
 
-// id and display for the submit button
-const SUBMIT_ID = "ENTER";
-const SUBMIT_HTML = "Submit";
+const KEYBOARD_LAYOUT = [
+    [["Q"], ["W"], ["E"], ["R"], ["T"], ["Y"], ["U"], ["I"], ["O"], ["P"]],
+    [["A"], ["S"], ["D"], ["F"], ["G"], ["H"], ["J"], ["K"], ["L"]],
+    [["Z"], ["X"], ["C"], ["V"], ["B"], ["N"], ["M"], ["\u232B"]],
+    [["Submit"]],
+];
 
-// HTML for line breaks
-const LINE_BREAK_HTML = "<br />";
+const KEYBOARD_LAYOUT_FLAT = [
+    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
+    "A", "S", "D", "F", "G", "H", "J", "K", "L",
+    "Z", "X", "C", "V", "B", "N", "M", "\u232B",
+    "Submit",
+];
+
+const KEYBOARD_CLASSES = [[], ["tile", "key", "open"]];
 
 export class Keyboard {
-    // the arrangement of the keyboard
-    #layout;
+    #refs;
 
-    // tiles displaying the keys
-    #keyboardTiles;
-
-    constructor(layout) {
-        this.#layout = layout;
-        this.#keyboardTiles = {};
+    constructor() {
+        this.#refs = [[], []];
     }
 
-    // permanently lock keys to prevent them from being clicked or typed
-    lockKeys(keys) {
-        for (let i = 0; i < keys.length; i++) {
-            if (this.#keyboardTiles[keys[i]]) {
-
-                // update the display of the tile
-                this.#keyboardTiles[keys[i]].classList.remove("tile-unsolved");
-                this.#keyboardTiles[keys[i]].classList.add("tile-locked");
-
-                // remove the tile from the dictionary of tiles
-                this.#keyboardTiles[keys[i]] = undefined;
-            }
-        }
+    initializeDisplay(keyboardElement) {
+        tileDisplay(keyboardElement, KEYBOARD_LAYOUT, KEYBOARD_CLASSES, this.#refs);
     }
 
-    // create the key tiles for the on-screen keyboard
-    initializeKeyboardElement(keyboardElement) {
-
-        // iterate over every row in the layout
-        for (let i = 0; i < this.#layout.length; i++) {
-
-            // add a line break between rows of the keyboard
-            keyboardElement.insertAdjacentHTML("beforeend", LINE_BREAK_HTML);
-
-            // iterate over every key in the row
-            for (let j = 0; j < this.#layout[i].length; j++) {
-                const key = this.#layout[i][j];
-
-                // create a tile for each key
-                keyboardElement.insertAdjacentHTML("beforeend", `<span id="${key}" class="tile tile-large tile-unsolved">${key}</span>`);
-
-                // save the reference to the tile
-                this.#keyboardTiles[key] = document.getElementById(key);
-            }
-        }
-
-        // add a special backspace tile
-        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${BACKSPACE_ID}" class="tile tile-x-large tile-unsolved">${BACKSPACE_HTML}</span>`);
-        this.#keyboardTiles[BACKSPACE_ID] = document.getElementById(BACKSPACE_ID);
-
-        // add a special submit button after a line break
-        keyboardElement.insertAdjacentHTML("beforeend", LINE_BREAK_HTML);
-        keyboardElement.insertAdjacentHTML("beforeend", `<span id="${SUBMIT_ID}" class="tile tile-xx-large tile-unsolved">${SUBMIT_HTML}</span>`);
-        this.#keyboardTiles[SUBMIT_ID] = document.getElementById(SUBMIT_ID);
-    }
-
-    // create the event listeners for both the on-screen keyboard and keydown events
     initializeEventListeners(puzzle) {
-        const keyboard = this;
+        for (let i = 0; i < this.#refs[1].length; i++) {
+            if (i === 26) {
+                this.#refs[1][i].addEventListener("click", () => {
+                    puzzle.deleteLetter();
+                });
+            }
+            else if (i === 27) {
+                this.#refs[1][i].addEventListener("click", () => {
+                    puzzle.checkSolution();
 
-        // iterate over every key in the layout
-        for (const [key, tile] of Object.entries(this.#keyboardTiles)) {
-
-            // add an event listener to each tile
-            tile.addEventListener("click", () => { Keyboard.handleKeydown(keyboard, puzzle, key); });
+                    for (let i = 0; i < KEYBOARD_LAYOUT_FLAT.length; i++) {
+                        this.blockLetter(KEYBOARD_LAYOUT_FLAT[i]);
+                    }
+                });
+            }
+            else {
+                this.#refs[1][i].addEventListener("click", () => {
+                    puzzle.sketchLetter(KEYBOARD_LAYOUT_FLAT[i]);
+                });
+            }
         }
 
-        // add an event listener to detect keydown events
-        addEventListener("keydown", (e) => { Keyboard.handleKeydown(keyboard, puzzle, e.key.toUpperCase()); });
-
-        // set the puzzle to lock keys that are revealed
-        puzzle.setTriggerOnReveal((keys) => { keyboard.lockKeys(keys); });
-
-        // force the puzzle to trigger the function right away
-        puzzle.revealLetter();
-    }
-
-    // handle a keydown event
-    static handleKeydown(keyboard, puzzle, key) {
-        if (keyboard.#keyboardTiles[key]) {
-
-            // if the backspace key is pressed, delete a sketched letter from the puzzle
-            if (key === BACKSPACE_ID) {
+        addEventListener("keydown", (e) => {
+            if (e.key === "Backspace") {
                 puzzle.deleteLetter();
             }
+            else if (e.key === "Enter") {
+                puzzle.checkSolution();
 
-            // if the submit button is pressed, submit the puzzle and lock all keys
-            else if (key === SUBMIT_ID) {
-                keyboard.lockKeys(Object.getOwnPropertyNames(keyboard.#keyboardTiles));
-                puzzle.submitAnswer();
+                for (let i = 0; i < KEYBOARD_LAYOUT_FLAT.length; i++) {
+                    this.blockLetter(KEYBOARD_LAYOUT_FLAT[i]);
+                }
             }
-
-            // if any other key is pressed, sketch it in the puzzle
             else {
-                puzzle.sketchLetter(key.toUpperCase());
+                puzzle.sketchLetter(e.key.toUpperCase());
             }
-        }
+        });
+    }
+
+    blockLetter(letter) {
+        const ref = this.#refs[1][KEYBOARD_LAYOUT_FLAT.indexOf(letter)];
+        ref.classList.remove("open");
+        ref.classList.add("locked");
+        ref.outerHTML = ref.outerHTML;
     }
 }

@@ -1,204 +1,107 @@
-// names of the search parameters used to store the puzzle
-export const SEARCH_PARAM_CLUE     = "clue";
-export const SEARCH_PARAM_SOLUTION = "solution";
-export const SEARCH_PARAM_LETTERS  = "letters";
+import { tileDisplay } from "./tileDisplay.js";
 
-// regex matches for gaps and tiles in the solution
-const LETTER_SPACE = "^ $";
-const LETTER_TILE = "^[A-Z]$";
+// regex for space characters and tile characters in the solution
+const REGEX_SPACE    = / +/;
+const REGEX_TILE     = /^[A-Z]$/;
+const REGEX_NOT_TILE = /[^A-Z]/g;
 
-// HTML for gaps
-const HTML_WORD_GAP = "&ensp;";
-const HTML_LETTER_GAP = "&hairsp;";
-
-// default character used in empty tiles
-const EMPTY_TILE = "\u00A0";
+// CSS classes for elements in the solution
+const SOLUTION_CLASSES = [["word"], ["tile", "letter", "open"]];
 
 export class Puzzle {
+    // tiles displaying the puzzle
+    #refs;
+    #solutionTiles;
+    #revealedLetters;
+
     // elements of the puzzle
     #clue;
     #solution;
     #letters;
-
-    // tiles displaying the puzzle
-    #solutionTiles;
-
-    // function invoked when tiles are revealed
-    #triggerOnReveal;
 
     constructor(clue, solution, letters) {
         this.#clue     = clue.toUpperCase();
         this.#solution = solution.toUpperCase();
         this.#letters  = letters.toUpperCase();
 
-        this.#solutionTiles = {};
+        this.#refs = [[], []];
+        this.#solutionTiles = this.#solution.replaceAll(REGEX_NOT_TILE, "");
+        this.#revealedLetters = "";
     }
 
-    // load the puzzle clue into the clue element
-    initializeClueElement(clueElement) {
+    // create the letter tiles for the puzzle solution and populate the clue element
+    initializeDisplay(clueElement, solutionElement) {
+        const solution = this.#solution.split(REGEX_SPACE).map((x) => (Array.from(x).map((y) => y.match(REGEX_TILE) ? [] : y)));
+        tileDisplay(solutionElement, solution, SOLUTION_CLASSES, this.#refs);
         clueElement.textContent = this.#clue;
     }
 
-    // set up the blank tiles in the solution element
-    initializeSolutionElement(solutionElement) {
-        let wordElement = null;
+    initializeEventListeners(keyboard) {
+        for (let i = 0; i < this.#refs[1].length; i++) {
+            this.#refs[1][i].addEventListener("click", () => {
+                this.revealLetter(this.#solutionTiles[i]);
+                keyboard.blockLetter(this.#solutionTiles[i]);
+            });
+        }
 
-        for (let i = 0; i <= this.#solution.length; i++) {
+        for (let i = 0; i < this.#letters.length; i++) {
+            this.revealLetter(this.#letters[i]);
+            keyboard.blockLetter(this.#letters[i]);
+        }
+    }
 
-            // add a gap between words, and at the end of the last word for balance
-            if (i >= this.#solution.length || this.#solution[i].match(LETTER_SPACE) && wordElement) {
+    revealLetter(letter) {
+        if (letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
+            this.#revealedLetters += letter;
 
-                // add the HTML for a gap
-                wordElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
-
-                // signal that the end of a word was reached
-                wordElement = null;
-            }
-            else {
-
-                // add a gap between words
-                if (!wordElement) {
-
-                    // create a div to group tiles by word
-                    solutionElement.insertAdjacentHTML("beforeend", `<div id="word-${i}" class="word"></div>`);
-                    wordElement = document.getElementById(`word-${i}`);
-
-                    // add the HTML for a gap
-                    wordElement.insertAdjacentHTML("beforeend", HTML_WORD_GAP);
+            for (let i = 0; i < this.#refs[1].length; i++) {
+                if (this.#solutionTiles[i] === letter) {
+                    this.#refs[1][i].classList.remove("open");
+                    this.#refs[1][i].classList.add("correct");
+                    this.#refs[1][i].textContent = letter;
                 }
-
-                // add a smaller space between tiles
-                else {
-                    wordElement.insertAdjacentHTML("beforeend", HTML_LETTER_GAP);
-                }
-
-                // add a tile where there is a letter in the solution
-                if (this.#solution[i].match(LETTER_TILE)) {
-
-                    // add the HTML for a tile
-                    wordElement.insertAdjacentHTML("beforeend", `<span id="${i}" class="tile tile-unsolved"></span>`);
-
-                    // save the reference to the tile
-                    this.#solutionTiles[i] = document.getElementById(i);
-
-                    // set the tile to contain an empty character to preserve consistent formatting
-                    this.#solutionTiles[i].textContent = EMPTY_TILE;
-
-                    // add an event listener to reveal letters when the tile is clicked
-                    const puzzle = this;
-                    this.#solutionTiles[i].addEventListener("click", () => { puzzle.addLetter(puzzle.#solution[i]); });
-                }
-
-                // add a non-clickable character where there is a special character in the solution
-                else {
-
-                    // add the special character directly as text
-                    wordElement.insertAdjacentText("beforeend", this.#solution[i]);
+                else if (this.#refs[1][i].textContent === letter) {
+                    this.#refs[1][i].textContent = "";
                 }
             }
         }
-
-        this.revealLetter();
     }
 
-    // set a function that is invoked when tiles are revealed
-    setTriggerOnReveal(f) {
-        this.#triggerOnReveal = f;
-    }
-
-    // add a letter to the list of revealed letters
-    addLetter(letter) {
-
-        // check that the character is a simple letter and that it is not revealed
-        if (letter.match(LETTER_TILE) && this.#letters.indexOf(letter) === -1) {
-            this.#letters += letter;
-            this.revealLetter();
-        }
-    }
-
-    // update tiles to reveal letters
-    revealLetter() {
-        for (let i = 0; i < this.#solution.length; i++) {
-            if (this.#solutionTiles[i]) {
-
-                // reveal tiles which appear in the list of shown letters
-                if (this.#letters.indexOf(this.#solution[i]) > -1) {
-
-                    // update the content of the tile
-                    this.#solutionTiles[i].textContent = this.#solution[i];
-
-                    // update the display of the tile
-                    this.#solutionTiles[i].classList.remove("tile-unsolved");
-                    this.#solutionTiles[i].classList.add("tile-solved");
-
-                    // remove the tile from the dictionary of tiles
-                    this.#solutionTiles[i] = undefined;
-                }
-
-                // delete sketched letters which appear in the list of shown letters
-                else if (this.#letters.indexOf(this.#solutionTiles[i].textContent) > -1) {
-                    this.#solutionTiles[i].textContent = EMPTY_TILE;
-                }
-            }
-        }
-
-        // invoke the custom function if it exists and pass it the revealed letters
-        if (this.#triggerOnReveal) {
-            this.#triggerOnReveal(this.#letters);
-        }
-    }
-
-    // add a letter to the first hidden tile
     sketchLetter(letter) {
-
-        // check that the character is a simple letter and that it is not revealed
-        if (letter.match(LETTER_TILE) && this.#letters.indexOf(letter) === -1) {
-
-            // find the first empty hidden tile
-            for (let i = 0; i < this.#solution.length; i++) {
-                if (this.#solutionTiles[i] && this.#solutionTiles[i].textContent === EMPTY_TILE) {
-                    this.#solutionTiles[i].textContent = letter;
+        if (letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
+            for (let i = 0; i < this.#refs[1].length; i++) {
+                if (this.#refs[1][i].textContent === "") {
+                    this.#refs[1][i].textContent = letter;
                     break;
                 }
             }
         }
     }
 
-    // delete the last sketched letter
     deleteLetter() {
-
-        // find the last hidden tile with a letter on it
-        for (let i = this.#solution.length - 1; i >= 0; i--) {
-            if (this.#solutionTiles[i] && this.#solutionTiles[i].textContent !== EMPTY_TILE) {
-                this.#solutionTiles[i].textContent = EMPTY_TILE;
+        for (let i = this.#refs[1].length - 1; i >= 0; i--) {
+            if (this.#revealedLetters.indexOf(this.#solutionTiles[i]) === -1 && this.#refs[1][i].textContent !== "") {
+                this.#refs[1][i].textContent = "";
                 break;
             }
         }
     }
 
-    // test all sketched letters in the puzzle
-    submitAnswer() {
+    checkSolution() {
         let correct = true;
 
-        // lock each tile
-        for (let i = 0; i < this.#solution.length; i++) {
-            if (this.#solutionTiles[i]) {
+        for (let i = 0; i < this.#refs[1].length; i++) {
+            this.#refs[1][i].classList.remove("open");
 
-                // update the display of each tile
-                this.#solutionTiles[i].classList.remove("tile-unsolved");
-
-                // make the tile solved if the letter is right, or incorrect if the letter is wrong
-                if (this.#solutionTiles[i].textContent === this.#solution[i]) {
-                    this.#solutionTiles[i].classList.add("tile-solved");
-                }
-                else {
-                    this.#solutionTiles[i].classList.add("tile-incorrect");
-                    correct = false;
-                }
-
-                // remove the tile from the dictionary of tiles
-                this.#solutionTiles[i] = undefined;
+            if (this.#refs[1][i].textContent === this.#solutionTiles[i]) {
+                this.#refs[1][i].classList.add("correct");
             }
+            else {
+                this.#refs[1][i].classList.add("incorrect");
+                correct = false;
+            }
+
+            this.#refs[1][i].outerHTML = this.#refs[1][i].outerHTML;
         }
 
         if (correct) {
@@ -219,23 +122,21 @@ export class Puzzle {
         const lettersBytes  = encoder.encode(puzzle.letters);
 
         // encode the arrays of bytes as url-safe base64 strings
-        const encodedPuzzle = {
-            SEARCH_PARAM_CLUE:     clueBytes.toBase64({ alphabet: "base64url" }),
-            SEARCH_PARAM_SOLUTION: solutionBytes.toBase64({ alphabet: "base64url" }),
-            SEARCH_PARAM_LETTERS:  lettersBytes.toBase64({ alphabet: "base64url" }),
-        };
-
-        return encodedPuzzle;
+        return [
+            clueBytes.toBase64({ alphabet: "base64url" }),
+            solutionBytes.toBase64({ alphabet: "base64url" }),
+            lettersBytes.toBase64({ alphabet: "base64url" }),
+        ];
     }
 
-    // create a puzzle from an encoded string
+    // decode a puzzle from three url-safe base64 strings
     static decode(encodedPuzzle) {
         const decoder = new TextDecoder();
 
         // decode the url-safe base64 strings as arrays of bytes
-        const clueBytes     = Uint8Array.fromBase64(encodedPuzzle[SEARCH_PARAM_CLUE], { alphabet: "base64url" });
-        const solutionBytes = Uint8Array.fromBase64(encodedPuzzle[SEARCH_PARAM_SOLUTION], { alphabet: "base64url" });
-        const lettersBytes  = Uint8Array.fromBase64(encodedPuzzle[SEARCH_PARAM_LETTERS], { alphabet: "base64url" });
+        const clueBytes     = Uint8Array.fromBase64(encodedPuzzle[0], { alphabet: "base64url" });
+        const solutionBytes = Uint8Array.fromBase64(encodedPuzzle[1], { alphabet: "base64url" });
+        const lettersBytes  = Uint8Array.fromBase64(encodedPuzzle[2], { alphabet: "base64url" });
 
         // decode the arrays of bytes as parts of the puzzle
         const clue     = decoder.decode(clueBytes);

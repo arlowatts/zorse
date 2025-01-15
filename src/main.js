@@ -1,35 +1,43 @@
-import { Puzzle, SEARCH_PARAM_CLUE, SEARCH_PARAM_SOLUTION, SEARCH_PARAM_LETTERS } from "./puzzle.js";
+import { Puzzle } from "./puzzle.js";
 import { Keyboard } from "./keyboard.js";
 
-// alphabet used to initialize the on-screen keyboard
-const KEYBOARD_LAYOUT = [
-    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-    ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Z", "X", "C", "V", "B", "N", "M"],
-];
+// default puzzle if the puzzle in the URL cannot be decoded
+const DEFAULT_PUZZLE = new Puzzle("the warmest days of winter, spent by the sea", "beach dog days", "eo");
 
-// load the search parameters
-const searchParams = new URLSearchParams(window.location.search);
+// search parameters used in the URL for parts of the puzzle
+const SEARCH_PARAM_CLUE     = "clue";
+const SEARCH_PARAM_SOLUTION = "solution";
+const SEARCH_PARAM_LETTERS  = "letters";
 
-// copy the values of the search parameters
-const encodedPuzzle = {
-    SEARCH_PARAM_CLUE:     searchParams.get(SEARCH_PARAM_CLUE),
-    SEARCH_PARAM_SOLUTION: searchParams.get(SEARCH_PARAM_SOLUTION),
-    SEARCH_PARAM_LETTERS:  searchParams.get(SEARCH_PARAM_LETTERS),
-};
+// HTML element ids used to display the page content
+const ELEMENT_ID_CLUE     = "clue";
+const ELEMENT_ID_SOLUTION = "solution";
+const ELEMENT_ID_KEYBOARD = "keyboard";
 
-// decode the puzzle or use the fallback if decoding fails
-let puzzle;
-try { puzzle = Puzzle.decode(encodedPuzzle); }
-catch { puzzle = new Puzzle("the propensity to shoot targets with your toes", "trigger happy feet", "t"); }
+addEventListener("load", main);
 
-// initialize the puzzle display
-puzzle.initializeClueElement(document.getElementById("puzzle-clue"));
-puzzle.initializeSolutionElement(document.getElementById("puzzle-solution"));
+function main() {
 
-// create the on-screen keyboard
-const keyboard = new Keyboard(KEYBOARD_LAYOUT);
-keyboard.initializeKeyboardElement(document.getElementById("keyboard"));
+    // load the search parameters
+    const searchParams = new URLSearchParams(window.location.search);
 
-// initialize the keyboard events
-keyboard.initializeEventListeners(puzzle);
+    const encodedPuzzle = [
+        searchParams.get(SEARCH_PARAM_CLUE),
+        searchParams.get(SEARCH_PARAM_SOLUTION),
+        searchParams.get(SEARCH_PARAM_LETTERS),
+    ];
+
+    // decode the puzzle or use the fallback if decoding isn't possible
+    const puzzle = Uint8Array.fromBase64 ? Puzzle.decode(encodedPuzzle) : DEFAULT_PUZZLE;
+
+    // create the on-screen keyboard
+    const keyboard = new Keyboard();
+
+    // initialize displays
+    puzzle.initializeDisplay(document.getElementById(ELEMENT_ID_CLUE), document.getElementById(ELEMENT_ID_SOLUTION));
+    keyboard.initializeDisplay(document.getElementById(ELEMENT_ID_KEYBOARD));
+
+    // initialize event listeners
+    puzzle.initializeEventListeners(keyboard);
+    keyboard.initializeEventListeners(puzzle);
+}
