@@ -2,7 +2,7 @@ import { tileDisplay } from "./tileDisplay.js";
 import { Puzzle } from "./puzzle.js";
 
 export class Creator {
-    #layout = ["CLUE", [], "SOLUTION", [], "REVEALED LETTERS", [], [["Submit"]]];
+    #layouts = [["CLUE", []], ["SOLUTION", []], ["REVEALED LETTERS", []], [[["Submit"]]]];
 
     #cssClasses = [["wrapper"], [], ["tile"]];
 
@@ -13,7 +13,7 @@ export class Creator {
     #refs = [[], [], []];
 
     initializeDisplay(wrapper) {
-        tileDisplay(this.#layout, this.#cssClasses, wrapper, this.#refs);
+        this.#layouts.forEach((layout) => { tileDisplay(layout, this.#cssClasses, wrapper, this.#refs); });
 
         this.#refs[2][0].style.width = "50%";
 
@@ -36,8 +36,12 @@ export class Creator {
         const solution = this.#refs[1][1].children[0].value;
         const letters  = this.#refs[1][2].children[0].value;
 
+        alert(clue + solution + letters);
+
         const puzzle = new Puzzle(clue, solution, letters);
         const encodedPuzzle = Puzzle.encode(puzzle);
+
+        alert(encodedPuzzle);
 
         const searchParams = new URLSearchParams(window.location.search);
 
