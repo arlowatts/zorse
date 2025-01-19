@@ -1,8 +1,6 @@
 import { Puzzle } from "./puzzle.js";
 import { Keyboard } from "./keyboard.js";
-
-// default puzzle if the puzzle in the URL cannot be decoded
-const DEFAULT_PUZZLE = new Puzzle("the warmest days of winter, spent by the sea", "beach dog days", "eo");
+import { Creator } from "./creator.js";
 
 // search parameters used in the URL for parts of the puzzle
 const SEARCH_PARAM_CLUE     = "clue";
@@ -21,15 +19,24 @@ function main() {
         searchParams.get(SEARCH_PARAM_LETTERS),
     ];
 
-    const puzzle = Uint8Array.fromBase64 ? Puzzle.decode(encodedPuzzle) : DEFAULT_PUZZLE;
+    if (encodedPuzzle[0] && encodedPuzzle[1] && encodedPuzzle[2]) {
+        const puzzle = Puzzle.decode(encodedPuzzle);
+        const keyboard = new Keyboard();
 
-    const keyboard = new Keyboard();
+        puzzle.initializeDisplay(document.body);
+        puzzle.initializeEventListeners();
 
-    puzzle.initializeDisplay(document.body);
-    puzzle.initializeEventListeners();
+        keyboard.initializeDisplay(document.body);
+        keyboard.initializeEventListeners();
 
-    keyboard.initializeDisplay(document.body);
-    keyboard.initializeEventListeners();
+        keyboard.addTarget(puzzle);
+    }
+    else {
+        const creator = new Creator();
 
-    keyboard.addTarget(puzzle);
+        creator.setSearchParams(SEARCH_PARAM_CLUE, SEARCH_PARAM_SOLUTION, SEARCH_PARAM_LETTERS);
+
+        creator.initializeDisplay(document.body);
+        creator.initializeEventListeners();
+    }
 }
