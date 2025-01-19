@@ -105,7 +105,7 @@ export class Puzzle {
         }
     }
 
-    // encode the puzzle as three url-safe base64 strings
+    // encode the puzzle as three base64 strings
     static encode(puzzle) {
         const encoder = new TextEncoder();
 
@@ -114,11 +114,11 @@ export class Puzzle {
         const solutionBytes = encoder.encode(puzzle.#solution);
         const lettersBytes  = encoder.encode(puzzle.#letters);
 
-        // encode the arrays of bytes as url-safe base64 strings
+        // encode the arrays of bytes as base64 strings
         return [
-            clueBytes.toBase64({ alphabet: "base64url" }),
-            solutionBytes.toBase64({ alphabet: "base64url" }),
-            lettersBytes.toBase64({ alphabet: "base64url" }),
+            btoa(String.fromCharCode.apply(null, clueBytes)),
+            btoa(String.fromCharCode.apply(null, solutionBytes)),
+            btoa(String.fromCharCode.apply(null, lettersBytes)),
         ];
     }
 
@@ -126,10 +126,10 @@ export class Puzzle {
     static decode(encodedPuzzle) {
         const decoder = new TextDecoder();
 
-        // decode the url-safe base64 strings as arrays of bytes
-        const clueBytes     = Uint8Array.fromBase64(encodedPuzzle[0], { alphabet: "base64url" });
-        const solutionBytes = Uint8Array.fromBase64(encodedPuzzle[1], { alphabet: "base64url" });
-        const lettersBytes  = Uint8Array.fromBase64(encodedPuzzle[2], { alphabet: "base64url" });
+        // decode the base64 strings as arrays of bytes
+        const clueBytes     = new Uint8Array(Array.from(atob(encodedPuzzle[0])).map((x) => x.charCodeAt()));
+        const solutionBytes = new Uint8Array(Array.from(atob(encodedPuzzle[1])).map((x) => x.charCodeAt()));
+        const lettersBytes  = new Uint8Array(Array.from(atob(encodedPuzzle[2])).map((x) => x.charCodeAt()));
 
         // decode the arrays of bytes as parts of the puzzle
         const clue     = decoder.decode(clueBytes);
