@@ -36,14 +36,8 @@ export class Creator {
         const solution = this.#refs[1][1].children[0].value;
         const letters  = this.#refs[1][2].children[0].value;
 
-        alert(clue + solution + letters);
-
         const puzzle = new Puzzle(clue, solution, letters);
         const encodedPuzzle = Puzzle.encode(puzzle);
-
-        console.log(encodedPuzzle);
-
-        alert(encodedPuzzle);
 
         const searchParams = new URLSearchParams(window.location.search);
 
