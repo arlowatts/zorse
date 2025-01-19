@@ -44,5 +44,7 @@ export class Creator {
         searchParams.set(this.#searchParamClue, encodedPuzzle[0]);
         searchParams.set(this.#searchParamSolution, encodedPuzzle[1]);
         searchParams.set(this.#searchParamLetters, encodedPuzzle[2]);
+
+        window.location.search = searchParams;
     }
 }
