@@ -1,51 +1,33 @@
-body {
-    margin: 0;
+html {
+    height: 100%;
+}
 
-    font-family: Helvetica, Arial, sans-serif;
+body {
+    text-align: center;
+    font-size: 30px;
     font-weight: bold;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+    margin: 0;
 
     touch-action: manipulation;
     -webkit-user-select: none;
     user-select: none;
 }
 
-div.header {
-    position: absolute;
-    width: 100%;
-    height: 10%;
-
-    text-align: right;
-    font-size: 20px;
-}
-
 @media only screen and (max-width: 480px) {
-    div.header {
-        font-size: 40px;
-    }
-}
-
-div.column {
-    position: absolute;
-    width: 100%;
-    height: 90%;
-    top: 10%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    text-align: center;
-    font-size: 30px;
-}
-
-@media only screen and (max-width: 480px) {
-    div.column {
+    body {
         font-size: 60px;
     }
 }
 
 div.wrapper {
     margin: 0em 1em;
+    min-height: 2em;
 }
 
 div.word {
@@ -66,10 +48,6 @@ div.key {
     line-height: 2.8em;
 }
 
-div.button {
-    padding: 0.5em;
-}
-
 div.tile {
     display: inline-block;
     vertical-align: top;
@@ -78,30 +56,18 @@ div.tile {
     border-width: 0.1em;
     border-radius: 0.25em;
     border-style: solid;
-}
+    border-color: lightgray;
 
-div.open {
-    border-color: #DDDDDD;
     cursor: pointer;
 }
 
 div.locked {
-    border-color: #DDDDDD;
-    color: #DDDDDD;
+    color: lightgray;
+    cursor: default;
 }
 
 div.correct {
-    border-color: #B8CCA0;
-    background-color: #B8CCA0;
-}
-
-div.incorrect {
-    border-color: #EEAAAA;
-    background-color: #EEAAAA;
-}
-
-div.functional {
-    background-color: #BBCCFF;
-    border-color: #99AADD;
-    cursor: pointer;
+    border-color: darkseagreen;
+    background-color: darkseagreen;
+    cursor: default;
 }

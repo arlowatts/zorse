@@ -1,120 +1,107 @@
 import { tileDisplay } from "./tileDisplay.js";
 
-// regex for space characters and tile characters in the solution
-const REGEX_SPACE    = / +/;
-const REGEX_TILE     = /^[A-Z]$/;
-const REGEX_NOT_TILE = /[^A-Z]/g;
-
-// CSS classes for elements in the solution
-const SOLUTION_CLASSES = [["word"], ["tile", "letter", "open"]];
-
 export class Puzzle {
-    // tiles displaying the puzzle
-    #refs;
-    #solutionTiles;
-    #revealedLetters;
+    static regexSpace = / +/;
+    static regexTile = /^[A-Z]$/;
+
+    #cssClasses = [["wrapper"], ["word"], ["tile", "letter"]];
+
+    #refs = [[], [], []];
 
     // elements of the puzzle
     #clue;
     #solution;
     #letters;
 
-    #active;
+    // the processed solution
+    #solutionNested;
+    #solutionFlat;
+    #revealedLetters = [];
 
     constructor(clue, solution, letters) {
         this.#clue     = clue.toUpperCase();
         this.#solution = solution.toUpperCase();
         this.#letters  = letters.toUpperCase();
 
-        this.#refs = [[], []];
-        this.#solutionTiles = this.#solution.replaceAll(REGEX_NOT_TILE, "");
-        this.#revealedLetters = "";
+        this.#solutionNested =
+            this.#solution
+            .split(Puzzle.regexSpace)
+            .map((x) => Array.from(x).map((y) => y.match(Puzzle.regexTile) ? [] : y));
 
-        this.#active = true;
+        this.#solutionFlat = Array.from(this.#solution).filter((x) => x.match(Puzzle.regexTile));
     }
 
-    // create the letter tiles for the puzzle solution and populate the clue element
-    initializeDisplay(clueElement, solutionElement) {
-        const solution = this.#solution.split(REGEX_SPACE).map((x) => (Array.from(x).map((y) => y.match(REGEX_TILE) ? [] : y)));
-        tileDisplay(solutionElement, solution, SOLUTION_CLASSES, this.#refs);
-        clueElement.textContent = this.#clue;
+    initializeDisplay(wrapper) {
+        tileDisplay([this.#clue], this.#cssClasses, wrapper);
+        tileDisplay(this.#solutionNested, this.#cssClasses, wrapper, this.#refs);
     }
 
-    initializeEventListeners(keyboard) {
-        for (let i = 0; i < this.#refs[1].length; i++) {
-            this.#refs[1][i].addEventListener("click", () => {
-                this.revealLetter(this.#solutionTiles[i]);
-                keyboard.blockLetter(this.#solutionTiles[i]);
-            });
+    initializeEventListeners() {
+        for (let i = 0; i < this.#solutionFlat.length; i++) {
+            this.#refs[2][i].addEventListener("click", () => { this.revealLetter(this.#solutionFlat[i]); });
         }
 
         for (let i = 0; i < this.#letters.length; i++) {
             this.revealLetter(this.#letters[i]);
-            keyboard.blockLetter(this.#letters[i]);
         }
     }
 
     revealLetter(letter) {
-        if (this.#active && letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
-            this.#revealedLetters += letter;
+        if (letter.match(Puzzle.regexTile) && !this.#revealedLetters.includes(letter)) {
+            this.#revealedLetters.push(letter);
 
-            for (let i = 0; i < this.#refs[1].length; i++) {
-                if (this.#solutionTiles[i] === letter) {
-                    this.#refs[1][i].classList.remove("open");
-                    this.#refs[1][i].classList.add("correct");
-                    this.#refs[1][i].textContent = letter;
+            for (let i = 0; i < this.#solutionFlat.length; i++) {
+                if (this.#solutionFlat[i] === letter) {
+                    this.#refs[2][i].classList.add("correct");
+                    this.#refs[2][i].textContent = letter;
                 }
-                else if (this.#refs[1][i].textContent === letter) {
-                    this.#refs[1][i].textContent = "";
-                }
+
+                else if (this.#refs[2][i].textContent === letter)
+                    this.#refs[2][i].textContent = "";
             }
         }
     }
 
-    sketchLetter(letter) {
-        if (this.#active && letter.match(REGEX_TILE) && this.#revealedLetters.indexOf(letter) === -1) {
-            for (let i = 0; i < this.#refs[1].length; i++) {
-                if (this.#refs[1][i].textContent === "") {
-                    this.#refs[1][i].textContent = letter;
+    addLetter(letter) {
+        if (letter.match(Puzzle.regexTile) && !this.#revealedLetters.includes(letter)) {
+            for (let i = 0; i < this.#solutionFlat.length; i++) {
+                if (!this.#refs[2][i].textContent) {
+                    this.#refs[2][i].textContent = letter;
                     break;
                 }
             }
         }
     }
 
-    deleteLetter() {
-        if (this.#active) {
-            for (let i = this.#refs[1].length - 1; i >= 0; i--) {
-                if (this.#revealedLetters.indexOf(this.#solutionTiles[i]) === -1 && this.#refs[1][i].textContent !== "") {
-                    this.#refs[1][i].textContent = "";
-                    break;
-                }
+    removeLetter() {
+        for (let i = this.#solutionFlat.length - 1; i >= 0; i--) {
+            if (!this.#revealedLetters.includes(this.#solutionFlat[i]) && this.#refs[2][i].textContent) {
+                this.#refs[2][i].textContent = "";
+                break;
             }
         }
     }
 
-    checkSolution() {
-        this.#active = false;
+    submit() {
+        let complete = true;
 
-        let correct = true;
-
-        for (let i = 0; i < this.#refs[1].length; i++) {
-            this.#refs[1][i].classList.remove("open");
-
-            if (this.#refs[1][i].textContent === this.#solutionTiles[i]) {
-                this.#refs[1][i].classList.add("correct");
-            }
-            else {
-                this.#refs[1][i].classList.add("incorrect");
-                correct = false;
+        for (let i = 0; i < this.#solutionFlat.length; i++) {
+            if (!this.#refs[2][i].textContent) {
+                complete = false;
+                break;
             }
         }
 
-        if (correct) {
-            alert(`You win!\n${this.#solution}`);
-        }
-        else {
-            alert(`Better luck next time...\n${this.#solution}`);
+        if (complete) {
+            for (let i = 0; i < this.#solutionFlat.length; i++) {
+                if (!this.#revealedLetters.includes(this.#solutionFlat[i]))
+                    this.#revealedLetters.push(this.#solutionFlat[i]);
+
+                if (this.#refs[2][i].textContent === this.#solutionFlat[i])
+                    this.#refs[2][i].classList.add("correct");
+                else
+                    this.#refs[2][i].classList.add("locked");
+            }
         }
     }
 

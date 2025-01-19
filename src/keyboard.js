@@ -1,70 +1,59 @@
 import { tileDisplay } from "./tileDisplay.js";
 
-const KEYBOARD_LAYOUT = [
-    [["Q"], ["W"], ["E"], ["R"], ["T"], ["Y"], ["U"], ["I"], ["O"], ["P"]],
-    [["A"], ["S"], ["D"], ["F"], ["G"], ["H"], ["J"], ["K"], ["L"]],
-    [["Z"], ["X"], ["C"], ["V"], ["B"], ["N"], ["M"], ["\u232B"]],
-    [["Submit"]],
-];
-
-const KEYBOARD_LAYOUT_FLAT = [
-    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
-    "A", "S", "D", "F", "G", "H", "J", "K", "L",
-    "Z", "X", "C", "V", "B", "N", "M", "\u232B",
-    "Submit",
-];
-
-const KEYBOARD_CLASSES = [[], ["tile", "key", "open"]];
-
 export class Keyboard {
-    #refs;
+    #layout = [
+        [["Q"], ["W"], ["E"], ["R"], ["T"], ["Y"], ["U"], ["I"], ["O"], ["P"]],
+        [["A"], ["S"], ["D"], ["F"], ["G"], ["H"], ["J"], ["K"], ["L"]],
+        [["Z"], ["X"], ["C"], ["V"], ["B"], ["N"], ["M"], ["\u232B"]],
+        [[], ["Space"], ["\u21B5"]],
+    ];
 
-    constructor() {
-        this.#refs = [[], []];
+    #layoutFlat = [
+        "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
+        "A", "S", "D", "F", "G", "H", "J", "K", "L",
+        "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE",
+        "", " ", "ENTER",
+    ];
+
+    #cssClasses = [["wrapper"], [], ["tile", "key"]];
+
+    #targets = [];
+
+    #refs = [[], [], []];
+
+    initializeDisplay(wrapper) {
+        tileDisplay(this.#layout, this.#cssClasses, wrapper, this.#refs);
+
+        this.#refs[2][26].style.width = "20%";
+        this.#refs[2][27].style.visibility = "hidden";
+        this.#refs[2][27].style.width = "20%";
+        this.#refs[2][28].style.width = "50%";
+        this.#refs[2][29].style.width = "20%";
     }
 
-    initializeDisplay(keyboardElement) {
-        tileDisplay(keyboardElement, KEYBOARD_LAYOUT, KEYBOARD_CLASSES, this.#refs);
+    initializeEventListeners() {
+        addEventListener("keydown", (e) => { this.keyDown(e.key.toUpperCase()); });
 
-        this.#refs[1][26].style.width = "20%";
-        this.#refs[1][27].style.width = "50%";
+        for (let i = 0; i < this.#layoutFlat.length; i++)
+            this.#refs[2][i].addEventListener("click", () => { this.keyDown(this.#layoutFlat[i]); });
     }
 
-    initializeEventListeners(puzzle) {
-        for (let i = 0; i < this.#refs[1].length; i++) {
-            if (i === 26) {
-                this.#refs[1][i].addEventListener("click", () => {
-                    puzzle.deleteLetter();
-                });
-            }
-            else if (i === 27) {
-                this.#refs[1][i].addEventListener("click", () => {
-                    puzzle.checkSolution();
-                });
-            }
-            else {
-                this.#refs[1][i].addEventListener("click", () => {
-                    puzzle.sketchLetter(KEYBOARD_LAYOUT_FLAT[i]);
-                });
+    addTarget(target) {
+        this.#targets.push(target);
+    }
+
+    keyDown(key) {
+        if (this.#layoutFlat.includes(key)) {
+            const index = this.#layoutFlat.indexOf(key);
+
+            for (let i = 0; i < this.#targets.length; i++) {
+                if (index === 26)
+                    this.#targets[i].removeLetter();
+                else if (index === 29)
+                    this.#targets[i].submit();
+                else
+                    this.#targets[i].addLetter(key);
             }
         }
-
-        addEventListener("keydown", (e) => {
-            if (e.key === "Backspace") {
-                puzzle.deleteLetter();
-            }
-            else if (e.key === "Enter") {
-                puzzle.checkSolution();
-            }
-            else {
-                puzzle.sketchLetter(e.key.toUpperCase());
-            }
-        });
-    }
-
-    blockLetter(letter) {
-        const ref = this.#refs[1][KEYBOARD_LAYOUT_FLAT.indexOf(letter)];
-        ref.classList.remove("open");
-        ref.classList.add("locked");
     }
 }
