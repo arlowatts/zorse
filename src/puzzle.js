@@ -110,9 +110,9 @@ export class Puzzle {
         const encoder = new TextEncoder();
 
         // encode the parts of the puzzle as arrays of bytes
-        const clueBytes     = encoder.encode(puzzle.clue);
-        const solutionBytes = encoder.encode(puzzle.solution);
-        const lettersBytes  = encoder.encode(puzzle.letters);
+        const clueBytes     = encoder.encode(puzzle.#clue);
+        const solutionBytes = encoder.encode(puzzle.#solution);
+        const lettersBytes  = encoder.encode(puzzle.#letters);
 
         // encode the arrays of bytes as url-safe base64 strings
         return [

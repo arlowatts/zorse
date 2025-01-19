@@ -41,6 +41,8 @@ export class Creator {
         const puzzle = new Puzzle(clue, solution, letters);
         const encodedPuzzle = Puzzle.encode(puzzle);
 
+        console.log(encodedPuzzle);
+
         alert(encodedPuzzle);
 
         const searchParams = new URLSearchParams(window.location.search);
