@@ -20,7 +20,7 @@ body {
 }
 
 input[type=text] {
-    width: 100%;
+    width: 95%;
     padding: 0.5em;
 
     font-size: inherit;
@@ -32,27 +32,22 @@ input[type=text] {
     border-color: lightgray;
 }
 
-div.wrapper {
-    margin: 0em 1em;
-    min-height: 2em;
-}
-
 div.word {
     display: inline-block;
     margin: 0em 0.75em;
 }
 
 div.letter {
-    width: 1.6em;
-    height: 2em;
-    line-height: 1.8em;
+    width: 1.2em;
+    height: 1.5em;
+    line-height: 1.3em;
     margin: 0em 0.05em;
 }
 
 div.key {
     width: 10%;
-    height: 3em;
-    line-height: 2.8em;
+    height: 2.5em;
+    line-height: 2.3em;
 }
 
 div.tile {

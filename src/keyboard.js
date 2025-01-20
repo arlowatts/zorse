@@ -4,18 +4,16 @@ export class Keyboard {
     #layout = [
         [["Q"], ["W"], ["E"], ["R"], ["T"], ["Y"], ["U"], ["I"], ["O"], ["P"]],
         [["A"], ["S"], ["D"], ["F"], ["G"], ["H"], ["J"], ["K"], ["L"]],
-        [["Z"], ["X"], ["C"], ["V"], ["B"], ["N"], ["M"], ["\u232B"]],
-        [["Submit"]],
+        [["\u21B5"], ["Z"], ["X"], ["C"], ["V"], ["B"], ["N"], ["M"], ["\u232B"]],
     ];
 
     #layoutFlat = [
         "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
         "A", "S", "D", "F", "G", "H", "J", "K", "L",
-        "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE",
-        "ENTER",
+        "ENTER", "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE",
     ];
 
-    #cssClasses = [["wrapper"], [], ["tile", "key"]];
+    #cssClasses = [[], [], ["tile", "key"]];
 
     #targets = [];
 
@@ -24,8 +22,8 @@ export class Keyboard {
     initializeDisplay(wrapper) {
         tileDisplay(this.#layout, this.#cssClasses, wrapper, this.#refs);
 
-        this.#refs[2][26].style.width = "20%";
-        this.#refs[2][27].style.width = "50%";
+        this.#refs[2][19].style.width = "15%";
+        this.#refs[2][27].style.width = "15%";
     }
 
     initializeEventListeners() {
@@ -44,10 +42,10 @@ export class Keyboard {
             const index = this.#layoutFlat.indexOf(key);
 
             for (let i = 0; i < this.#targets.length; i++) {
-                if (index === 26)
-                    this.#targets[i].removeLetter();
-                else if (index === 27)
+                if (index === 19)
                     this.#targets[i].submit();
+                else if (index === 27)
+                    this.#targets[i].removeLetter();
                 else
                     this.#targets[i].addLetter(key);
             }

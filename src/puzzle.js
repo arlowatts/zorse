@@ -4,7 +4,7 @@ export class Puzzle {
     static regexSpace = / +/;
     static regexTile = /^[A-Z]$/;
 
-    #cssClasses = [["wrapper"], ["word"], ["tile", "letter"]];
+    #cssClasses = [[], ["word"], ["tile", "letter"]];
 
     #refs = [[], [], []];
 

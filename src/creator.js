@@ -4,7 +4,7 @@ import { Puzzle } from "./puzzle.js";
 export class Creator {
     #layouts = [["CLUE", []], ["SOLUTION", []], ["REVEALED LETTERS", []], [[["Submit"]]]];
 
-    #cssClasses = [["wrapper"], [], ["tile"]];
+    #cssClasses = [[], [], ["tile"]];
 
     #searchParamClue;
     #searchParamSolution;
