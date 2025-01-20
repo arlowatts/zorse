@@ -24,6 +24,7 @@ input[type=text] {
     padding: 0.5em;
 
     font-size: inherit;
+    text-transform: uppercase;
 
     box-sizing: border-box;
     border-width: 0.1em;

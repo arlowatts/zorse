@@ -1,6 +1,8 @@
 import { tileDisplay } from "./tileDisplay.js";
 
 export class Puzzle {
+    static paramNames = ["c", "s", "l"];
+
     static regexSpace = / +/;
     static regexTile = /^[A-Z]$/;
 

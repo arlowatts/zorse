@@ -2,24 +2,23 @@ import { Puzzle } from "./puzzle.js";
 import { Keyboard } from "./keyboard.js";
 import { Creator } from "./creator.js";
 
-// search parameters used in the URL for parts of the puzzle
-const SEARCH_PARAM_CLUE     = "clue";
-const SEARCH_PARAM_SOLUTION = "solution";
-const SEARCH_PARAM_LETTERS  = "letters";
-
 addEventListener("load", main);
 
 function main() {
-    // load the search parameters
     const searchParams = new URLSearchParams(window.location.search);
 
-    const encodedPuzzle = [
-        searchParams.get(SEARCH_PARAM_CLUE),
-        searchParams.get(SEARCH_PARAM_SOLUTION),
-        searchParams.get(SEARCH_PARAM_LETTERS),
-    ];
+    const encodedPuzzle = [];
 
-    if (encodedPuzzle[0] && encodedPuzzle[1] && encodedPuzzle[2]) {
+    for (let i = 0; i < Puzzle.paramNames.length; i++) {
+        const value = searchParams.get(Puzzle.paramNames[i]);
+
+        if (value)
+            encodedPuzzle.push(value);
+        else
+            break;
+    }
+
+    if (encodedPuzzle.length === Puzzle.paramNames.length) {
         const puzzle = Puzzle.decode(encodedPuzzle);
         const keyboard = new Keyboard();
 
@@ -32,9 +31,7 @@ function main() {
         keyboard.addTarget(puzzle);
     }
     else {
-        const creator = new Creator();
-
-        creator.setSearchParams(SEARCH_PARAM_CLUE, SEARCH_PARAM_SOLUTION, SEARCH_PARAM_LETTERS);
+        const creator = new Creator(Puzzle.paramNames);
 
         creator.initializeDisplay(document.body);
         creator.initializeEventListeners();
