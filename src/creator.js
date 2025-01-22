@@ -4,7 +4,7 @@ import { Puzzle } from "./puzzle.js";
 export class Creator {
     #layout = ["CLUE", [], "SOLUTION", [], "REVEALED LETTERS", [], [["Play!"]]];
 
-    #cssClasses = [[], [], ["tile"]];
+    #cssClasses = [[], [], ["tile", "button"]];
 
     #refs = [[], [], []];
 
@@ -16,9 +16,6 @@ export class Creator {
 
     initializeDisplay(wrapper) {
         tileDisplay(this.#layout, this.#cssClasses, wrapper, this.#refs);
-
-        this.#refs[2][0].style.width = "50%";
-        this.#refs[2][0].style.margin = "1em 0em 0em 0em";
 
         for (let i = 0; i < this.#paramNames.length; i++)
             this.#refs[1][i].insertAdjacentHTML("beforeend", "<input type=\"text\">");

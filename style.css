@@ -33,9 +33,26 @@ input[type=text] {
     border-color: lightgray;
 }
 
+div.message {
+    height: 7.5em;
+}
+
 div.word {
     display: inline-block;
     margin: 0em 0.75em;
+}
+
+div.tile {
+    display: inline-block;
+    vertical-align: top;
+
+    box-sizing: border-box;
+    border-width: 0.1em;
+    border-radius: 0.25em;
+    border-style: solid;
+    border-color: lightgray;
+
+    cursor: pointer;
 }
 
 div.letter {
@@ -51,6 +68,11 @@ div.key {
     line-height: 2.3em;
 }
 
+div.button {
+    width: 50%;
+    margin: 1em 0em 0em 0em;
+}
+
 div.indicator {
     display: inline-block;
 
@@ -64,19 +86,6 @@ div.indicator {
     border-radius: 0.25em;
     border-style: solid;
     border-color: lightgray;
-}
-
-div.tile {
-    display: inline-block;
-    vertical-align: top;
-
-    box-sizing: border-box;
-    border-width: 0.1em;
-    border-radius: 0.25em;
-    border-style: solid;
-    border-color: lightgray;
-
-    cursor: pointer;
 }
 
 div.locked {
