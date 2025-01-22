@@ -26,6 +26,13 @@ export class Keyboard {
         this.#refs[2][27].style.width = "15%";
     }
 
+    clearDisplay() {
+        this.#refs[0][0].remove();
+
+        for (let i = 0; i < this.#refs.length; i++)
+            this.#refs[i] = [];
+    }
+
     initializeEventListeners() {
         addEventListener("keydown", (e) => { this.keyDown(e.key.toUpperCase()); });
 

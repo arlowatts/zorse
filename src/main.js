@@ -28,6 +28,7 @@ function main() {
         keyboard.initializeDisplay(document.body);
         keyboard.initializeEventListeners();
 
+        puzzle.addTarget(keyboard);
         keyboard.addTarget(puzzle);
     }
     else {

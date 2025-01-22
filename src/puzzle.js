@@ -19,6 +19,9 @@ export class Puzzle {
     #solutionNested;
     #solutionFlat;
     #revealedLetters = [];
+    #revealedCount = 0;
+
+    #targets = [];
 
     constructor(clue, solution, letters) {
         this.#clue     = clue.toUpperCase();
@@ -51,6 +54,7 @@ export class Puzzle {
     revealLetter(letter) {
         if (letter.match(Puzzle.regexTile) && !this.#revealedLetters.includes(letter)) {
             this.#revealedLetters.push(letter);
+            this.#revealedCount++;
 
             for (let i = 0; i < this.#solutionFlat.length; i++) {
                 if (this.#solutionFlat[i] === letter) {
@@ -105,6 +109,13 @@ export class Puzzle {
                     this.#refs[2][i].classList.add("locked");
             }
         }
+
+        for (let i = 0; i < this.#targets.length; i++)
+            this.#targets[i].clearDisplay();
+    }
+
+    addTarget(target) {
+        this.#targets.push(target);
     }
 
     // encode the puzzle as three base64 strings
