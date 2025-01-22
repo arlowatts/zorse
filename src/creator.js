@@ -26,6 +26,7 @@ export class Creator {
 
     initializeEventListeners() {
         this.#refs[2][0].addEventListener("click", () => { this.submit(); });
+        addEventListener("keydown", (e) => { if (e.key === "Enter") this.submit(); });
     }
 
     submit() {
