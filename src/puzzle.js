@@ -6,9 +6,12 @@ export class Puzzle {
     static regexSpace = / +/;
     static regexTile = /^[A-Z]$/;
 
-    #cssClasses = [[], ["word"], ["tile", "letter"]];
+    #cssClassesClue       = [["text"]];
+    #cssClassesSolution   = [[], ["word"], ["tile", "letter"]];
+    #cssClassesIndicators = [[], ["indicator"]];
 
     #refs = [[], [], []];
+    #refsIndicators = [[], []];
 
     // elements of the puzzle
     #clue;
@@ -18,8 +21,10 @@ export class Puzzle {
     // the processed solution
     #solutionNested;
     #solutionFlat;
+    #indicators;
     #revealedLetters = [];
-    #revealedCount = 0;
+    #reveals = 0;
+    #maxReveals = 5;
 
     #targets = [];
 
@@ -34,11 +39,17 @@ export class Puzzle {
             .map((x) => Array.from(x).map((y) => y.match(Puzzle.regexTile) ? [] : y));
 
         this.#solutionFlat = Array.from(this.#solution).filter((x) => x.match(Puzzle.regexTile));
+
+        this.#indicators = [];
+
+        for (let i = 0; i < this.#maxReveals; i++)
+            this.#indicators.push([]);
     }
 
     initializeDisplay(wrapper) {
-        tileDisplay([this.#clue], this.#cssClasses, wrapper);
-        tileDisplay(this.#solutionNested, this.#cssClasses, wrapper, this.#refs);
+        tileDisplay([this.#clue], this.#cssClassesClue, wrapper);
+        tileDisplay(this.#solutionNested, this.#cssClassesSolution, wrapper, this.#refs);
+        tileDisplay(this.#indicators, this.#cssClassesIndicators, wrapper, this.#refsIndicators);
     }
 
     initializeEventListeners() {
@@ -47,14 +58,18 @@ export class Puzzle {
         }
 
         for (let i = 0; i < this.#letters.length; i++) {
-            this.revealLetter(this.#letters[i]);
+            this.revealLetter(this.#letters[i], false);
         }
     }
 
-    revealLetter(letter) {
-        if (letter.match(Puzzle.regexTile) && !this.#revealedLetters.includes(letter)) {
+    revealLetter(letter, updateCounter = true) {
+        if (letter.match(Puzzle.regexTile) && !this.#revealedLetters.includes(letter) && this.#reveals < this.#maxReveals) {
             this.#revealedLetters.push(letter);
-            this.#revealedCount++;
+
+            if (updateCounter) {
+                this.#refsIndicators[1][this.#reveals].classList.add("correct");
+                this.#reveals++;
+            }
 
             for (let i = 0; i < this.#targets.length; i++)
                 this.#targets[i].lockKey(letter);

@@ -51,6 +51,21 @@ div.key {
     line-height: 2.3em;
 }
 
+div.indicator {
+    display: inline-block;
+
+    width: 0.5em;
+    height: 0.5em;
+
+    margin: 0em 0.25em;
+
+    box-sizing: border-box;
+    border-width: 0.1em;
+    border-radius: 0.25em;
+    border-style: solid;
+    border-color: lightgray;
+}
+
 div.tile {
     display: inline-block;
     vertical-align: top;
