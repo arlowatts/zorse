@@ -33,6 +33,22 @@ export class Keyboard {
             this.#refs[i] = [];
     }
 
+    lockKey(key) {
+        if (this.#layoutFlat.includes(key)) {
+            const index = this.#layoutFlat.indexOf(key);
+
+            this.#refs[2][index].classList.add("locked");
+        }
+    }
+
+    unlockKey(key) {
+        if (this.#layoutFlat.includes(key)) {
+            const index = this.#layoutFlat.indexOf(key);
+
+            this.#refs[2][index].classList.remove("locked");
+        }
+    }
+
     initializeEventListeners() {
         addEventListener("keydown", (e) => { this.keyDown(e.key.toUpperCase()); });
 

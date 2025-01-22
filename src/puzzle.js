@@ -56,6 +56,9 @@ export class Puzzle {
             this.#revealedLetters.push(letter);
             this.#revealedCount++;
 
+            for (let i = 0; i < this.#targets.length; i++)
+                this.#targets[i].lockKey(letter);
+
             for (let i = 0; i < this.#solutionFlat.length; i++) {
                 if (this.#solutionFlat[i] === letter) {
                     this.#refs[2][i].classList.add("correct");
@@ -66,6 +69,13 @@ export class Puzzle {
                     this.#refs[2][i].textContent = "";
             }
         }
+
+        if (this.isComplete())
+            for (let i = 0; i < this.#targets.length; i++)
+                this.#targets[i].unlockKey("ENTER");
+        else
+            for (let i = 0; i < this.#targets.length; i++)
+                this.#targets[i].lockKey("ENTER");
     }
 
     addLetter(letter) {
@@ -77,6 +87,10 @@ export class Puzzle {
                 }
             }
         }
+
+        if (this.isComplete())
+            for (let i = 0; i < this.#targets.length; i++)
+                this.#targets[i].unlockKey("ENTER");
     }
 
     removeLetter() {
@@ -86,19 +100,14 @@ export class Puzzle {
                 break;
             }
         }
+
+        if (!this.isComplete())
+            for (let i = 0; i < this.#targets.length; i++)
+                this.#targets[i].lockKey("ENTER");
     }
 
     submit() {
-        let complete = true;
-
-        for (let i = 0; i < this.#solutionFlat.length; i++) {
-            if (!this.#refs[2][i].textContent) {
-                complete = false;
-                break;
-            }
-        }
-
-        if (complete) {
+        if (this.isComplete()) {
             for (let i = 0; i < this.#solutionFlat.length; i++) {
                 if (!this.#revealedLetters.includes(this.#solutionFlat[i]))
                     this.#revealedLetters.push(this.#solutionFlat[i]);
@@ -108,14 +117,28 @@ export class Puzzle {
                 else
                     this.#refs[2][i].classList.add("locked");
             }
+
+            for (let i = 0; i < this.#targets.length; i++)
+                this.#targets[i].clearDisplay();
+        }
+    }
+
+    isComplete() {
+        let complete = true;
+
+        for (let i = 0; i < this.#solutionFlat.length; i++) {
+            if (!this.#refs[2][i].textContent) {
+                complete = false;
+                break;
+            }
         }
 
-        for (let i = 0; i < this.#targets.length; i++)
-            this.#targets[i].clearDisplay();
+        return complete;
     }
 
     addTarget(target) {
         this.#targets.push(target);
+        target.lockKey("ENTER");
     }
 
     // encode the puzzle as three base64 strings
