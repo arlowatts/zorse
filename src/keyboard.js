@@ -65,8 +65,10 @@ export class Keyboard {
             const index = this.#layoutFlat.indexOf(key);
 
             for (let i = 0; i < this.#targets.length; i++) {
-                if (index === 19)
+                if (index === 19) {
                     this.#targets[i].submit();
+                    document.activeElement.blur();
+                }
                 else if (index === 27)
                     this.#targets[i].removeLetter();
                 else
