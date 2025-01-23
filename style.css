@@ -19,6 +19,17 @@ body {
     user-select: none;
 }
 
+header {
+    font-size: 30px;
+    color: lightgray;
+    text-align: left;
+}
+
+a {
+    color: inherit;
+    margin: 0 1em;
+}
+
 input[type=text] {
     width: 95%;
     padding: 0.5em;
