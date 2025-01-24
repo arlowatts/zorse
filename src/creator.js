@@ -2,11 +2,11 @@ import { tileDisplay } from "./tileDisplay.js";
 import { Puzzle } from "./puzzle.js";
 
 export class Creator {
-    #layout = ["CLUE", [], "SOLUTION", [], "REVEALED LETTERS", [], [["Share"]], [["Play"]]];
+    #layout = [[], ["CLUE", []], ["SOLUTION", []], ["REVEALED LETTERS", []], [[["Share"]]], [[["Play"]]], []];
 
-    #cssClasses = [[], [], ["tile", "button"]];
+    #cssClasses = [["wrapper"], [], [], ["border", "box", "button"]];
 
-    #refs = [[], [], []];
+    #refs = [[], [], [], []];
 
     #paramNames;
 
@@ -21,17 +21,17 @@ export class Creator {
         tileDisplay(this.#layout, this.#cssClasses, wrapper, this.#refs);
 
         for (let i = 0; i < this.#paramNames.length; i++)
-            this.#refs[1][i].insertAdjacentHTML("beforeend", "<input type=\"text\">");
+            this.#refs[2][i].insertAdjacentHTML("beforeend", "<input type=\"text\" class=\"border\">");
     }
 
     initializeEventListeners() {
-        this.#refs[2][0].addEventListener("click", (e) => { this.share(e); });
-        this.#refs[2][1].addEventListener("click", () => { this.submit(); });
+        this.#refs[3][0].addEventListener("click", (e) => { this.share(e); });
+        this.#refs[3][1].addEventListener("click", () => { this.submit(); });
         addEventListener("keydown", (e) => { if (e.key === "Enter") this.submit(); });
     }
 
     share(e) {
-        navigator.clipboard.writeText("\"" + this.#refs[1][0].children[0].value.toUpperCase() + "\"\n" + window.location.origin + window.location.pathname + "?" + this.getSearchParams().toString());
+        navigator.clipboard.writeText("\"" + this.#refs[2][0].children[0].value.toUpperCase() + "\"\n" + window.location.origin + window.location.pathname + "?" + this.getSearchParams().toString());
         e.target.textContent = "Copied!";
     }
 
@@ -40,7 +40,7 @@ export class Creator {
     }
 
     getSearchParams() {
-        const values = this.#refs[1].slice(0, 3).map((x) => x.children[0].value);
+        const values = this.#refs[2].slice(0, 3).map((x) => x.children[0].value);
 
         const puzzle = new Puzzle(values[0], values[1], values[2]);
         const encodedPuzzle = Puzzle.encode(puzzle);

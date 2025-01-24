@@ -13,7 +13,7 @@ export class Keyboard {
         "ENTER", "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE",
     ];
 
-    #cssClasses = [[], [], ["tile", "key"]];
+    #cssClasses = [[], [], ["border", "box", "key"]];
 
     #targets = [];
 

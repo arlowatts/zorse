@@ -7,7 +7,7 @@ export class Puzzle {
     static regexTile = /^[A-Z]$/;
 
     #cssClassesClue       = [["text"]];
-    #cssClassesSolution   = [[], ["word"], ["tile", "letter"]];
+    #cssClassesSolution   = [[], ["word"], ["border", "box", "tile"]];
     #cssClassesIndicators = [[], ["indicator"]];
 
     #refs = [[], [], []];
@@ -72,7 +72,7 @@ export class Puzzle {
             this.#revealedLetters.push(letter);
 
             if (updateCounter) {
-                this.#refsIndicators[1][this.#reveals].classList.add("correct");
+                this.#refsIndicators[1][this.#reveals].classList.add("filled");
                 this.#reveals++;
             }
 
@@ -81,7 +81,7 @@ export class Puzzle {
 
             for (let i = 0; i < this.#solutionFlat.length; i++) {
                 if (this.#solutionFlat[i] === letter) {
-                    this.#refs[2][i].classList.add("correct");
+                    this.#refs[2][i].classList.add("filled");
                     this.#refs[2][i].textContent = letter;
                 }
 
@@ -136,7 +136,7 @@ export class Puzzle {
                     this.#revealedLetters.push(this.#solutionFlat[i]);
 
                 if (this.#refs[2][i].textContent === this.#solutionFlat[i])
-                    this.#refs[2][i].classList.add("correct");
+                    this.#refs[2][i].classList.add("filled");
                 else {
                     this.#refs[2][i].classList.add("locked");
                     correct = false;
@@ -169,7 +169,7 @@ export class Puzzle {
         const score = this.getScore(correct);
         const messageRef = [[], [], []];
 
-        tileDisplay([[this.#solution], [score], [["Share"]]], [["message"], [], ["tile", "button"]], this.#refs[0][0].parentElement, messageRef);
+        tileDisplay([[this.#solution], [score], [["Share"]]], [["message"], [], ["border", "box", "button"]], this.#refs[0][0].parentElement, messageRef);
 
         messageRef[2][0].addEventListener("click", (e) => {
             navigator.clipboard.writeText("\"" + this.#clue + "\"\n" + score);
