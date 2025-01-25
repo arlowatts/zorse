@@ -84,14 +84,14 @@ header {
     color: lightgray;
     text-align: left;
 
-    a {
-        color: inherit;
-    }
-
     .link {
         display: inline-block;
         margin: 0.25em 1em;
     }
+}
+
+header a {
+    color: inherit;
 }
 
 div.message {

@@ -30,7 +30,7 @@ export class Creator {
     }
 
     share(e) {
-        navigator.clipboard.writeText("\"" + this.#refs[2][0].children[0].value.toUpperCase() + "\"\n" + window.location.origin + window.location.pathname + "?" + this.getSearchParams().toString());
+        navigator.clipboard.writeText("\"" + this.#refs[2][0].children[0].value.toUpperCase() + "\"\n" + location.origin + location.pathname + "?" + this.getSearchParams());
         e.target.textContent = "Copied!";
     }
 
