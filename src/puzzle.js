@@ -8,7 +8,7 @@ export class Puzzle {
 
     #cssClassesClue       = [["text"]];
     #cssClassesSolution   = [[], ["word"], ["border", "box", "tile"]];
-    #cssClassesIndicators = [[], ["border", "box", "indicator"]];
+    #cssClassesIndicators = [[], ["border", "indicator"]];
 
     #refs = [[], [], []];
     #refsIndicators = [[], []];
