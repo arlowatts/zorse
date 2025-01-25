@@ -193,6 +193,10 @@ export class Puzzle {
         target.lockKey("ENTER");
     }
 
+    getLines() {
+        return [this.#clue, this.#solution, this.#letters];
+    }
+
     // encode the puzzle as three base64 strings
     static encode(puzzle) {
         const encoder = new TextEncoder();

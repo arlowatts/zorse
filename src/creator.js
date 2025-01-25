@@ -8,20 +8,19 @@ export class Creator {
 
     #refs = [[], [], [], []];
 
-    #paramNames;
+    #puzzle;
 
-    constructor(paramNames) {
-        this.#paramNames = paramNames;
-
-        if (this.#paramNames.length !== 3)
-            throw new RangeError("Incorrect number of parameters");
+    constructor(puzzle) {
+        this.#puzzle = puzzle;
     }
 
     initializeDisplay(wrapper) {
         tileDisplay(this.#layout, this.#cssClasses, wrapper, this.#refs);
 
-        for (let i = 0; i < this.#paramNames.length; i++)
+        for (let i = 0; i < Puzzle.paramNames.length; i++) {
             this.#refs[2][i].insertAdjacentHTML("beforeend", "<input type=\"text\" class=\"border\">");
+            this.#refs[2][i].firstElementChild.value = this.#puzzle.getLines()[i];
+        }
     }
 
     initializeEventListeners() {
@@ -36,7 +35,7 @@ export class Creator {
     }
 
     submit() {
-        window.location.search = this.getSearchParams();
+        location = location.origin + location.pathname + "?" + this.getSearchParams();
     }
 
     getSearchParams() {
@@ -47,8 +46,8 @@ export class Creator {
 
         const searchParams = new URLSearchParams();
 
-        for (let i = 0; i < this.#paramNames.length; i++)
-            searchParams.set(this.#paramNames[i], encodedPuzzle[i]);
+        for (let i = 0; i < Puzzle.paramNames.length; i++)
+            searchParams.set(Puzzle.paramNames[i], encodedPuzzle[i]);
 
         return searchParams;
     }
