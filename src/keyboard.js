@@ -50,7 +50,7 @@ export class Keyboard {
     }
 
     initializeEventListeners() {
-        addEventListener("keydown", (e) => { this.keyDown(e.key.toUpperCase()); });
+        addEventListener("keydown", (e) => { if (!e.ctrlKey) this.keyDown(e.key.toUpperCase()); });
 
         for (let i = 0; i < this.#layoutFlat.length; i++)
             this.#refs[2][i].addEventListener("click", () => { this.keyDown(this.#layoutFlat[i]); });
