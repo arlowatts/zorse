@@ -3,7 +3,6 @@ import { Keyboard } from "./keyboard.js";
 import { Creator } from "./creator.js";
 
 addEventListener("load", main);
-addEventListener("hashchange", () => { location.reload(); });
 
 function main() {
     const searchParams = new URLSearchParams(window.location.search);
@@ -15,11 +14,11 @@ function main() {
 
     const puzzle = Puzzle.decode(encodedPuzzle);
 
-    if (window.location.hash === "#create" || !encodedPuzzle[0] || !encodedPuzzle[1]) {
-        const creator = new Creator(puzzle);
+    if (!encodedPuzzle[1]) {
+        const creator = new Creator(document.body);
 
-        creator.initializeDisplay(document.body);
-        creator.initializeEventListeners();
+        // creator.initializeDisplay(document.body);
+        // creator.initializeEventListeners();
     }
     else {
         const keyboard = new Keyboard();

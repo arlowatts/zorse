@@ -18,9 +18,7 @@ export class Puzzle {
     #shrugEmoji = 0x1F937;
 
     // elements of the puzzle
-    #clue;
-    #solution;
-    #letters;
+    #lines = [];
 
     // the processed solution
     #solutionNested;
@@ -34,16 +32,21 @@ export class Puzzle {
     #submitted = false;
 
     constructor(clue, solution, letters) {
-        this.#clue     = clue.toUpperCase();
-        this.#solution = solution.toUpperCase();
-        this.#letters  = letters.toUpperCase();
+        if (!(typeof clue === "string")) {
+            this.#lines = clue;
+        }
+        else {
+            this.#lines[0] = {value: clue.toUpperCase()};
+            this.#lines[1] = {value: solution.toUpperCase()};
+            this.#lines[2] = {value: letters.toUpperCase()};
+        }
 
         this.#solutionNested =
-            this.#solution
+            this.#lines[1].value
             .split(Puzzle.regexSpace)
             .map((x) => Array.from(x).map((y) => y.match(Puzzle.regexTile) ? [] : y));
 
-        this.#solutionFlat = Array.from(this.#solution).filter((x) => x.match(Puzzle.regexTile));
+        this.#solutionFlat = Array.from(this.#lines[1].value).filter((x) => x.match(Puzzle.regexTile));
 
         this.#indicators = [];
 
@@ -52,7 +55,7 @@ export class Puzzle {
     }
 
     initializeDisplay(wrapper) {
-        tileDisplay([this.#clue], this.#cssClassesClue, wrapper);
+        tileDisplay([this.#lines[0].value], this.#cssClassesClue, wrapper);
         tileDisplay(this.#solutionNested, this.#cssClassesSolution, wrapper, this.#refs);
         tileDisplay(this.#indicators, this.#cssClassesIndicators, wrapper, this.#refsIndicators);
     }
@@ -62,8 +65,8 @@ export class Puzzle {
             this.#refs[2][i].addEventListener("click", () => { this.revealLetter(this.#solutionFlat[i]); });
         }
 
-        for (let i = 0; i < this.#letters.length; i++) {
-            this.revealLetter(this.#letters[i], false);
+        for (let i = 0; i < this.#lines[2].length; i++) {
+            this.revealLetter(this.#lines[2].value[i], false);
         }
     }
 
@@ -169,10 +172,10 @@ export class Puzzle {
         const score = this.getScore(correct);
         const messageRef = [[], [], []];
 
-        tileDisplay([[this.#solution], [score], [["Share"]]], [["message"], [], ["border", "box", "button"]], this.#refs[0][0].parentElement, messageRef);
+        tileDisplay([[this.#lines[1].value], [score], [["Share"]]], [["message"], [], ["border", "box", "button"]], this.#refs[0][0].parentElement, messageRef);
 
         messageRef[2][0].addEventListener("click", (e) => {
-            navigator.clipboard.writeText("\"" + this.#clue + "\"\n" + score);
+            navigator.clipboard.writeText("\"" + this.#lines[0].value + "\"\n" + score);
             e.target.textContent = "Copied!";
         });
     }
@@ -194,7 +197,24 @@ export class Puzzle {
     }
 
     getLines() {
-        return [this.#clue, this.#solution, this.#letters];
+        return this.#lines;
+    }
+
+    static shareURL(puzzle) {
+        return "\"" + puzzle.#lines[0].value.toUpperCase() + "\"\n" + Puzzle.getURL(puzzle);
+    }
+
+    static getURL(puzzle) {
+        console.log(puzzle.#lines);
+        const encodedPuzzle = Puzzle.encode(puzzle);
+        console.log(encodedPuzzle);
+
+        const searchParams = new URLSearchParams();
+
+        for (let i = 0; i < encodedPuzzle.length; i++)
+            searchParams.set(Puzzle.paramNames[i], encodedPuzzle[i]);
+
+        return location.origin + location.pathname + "?" + searchParams;
     }
 
     // encode the puzzle as three base64 strings
@@ -202,9 +222,9 @@ export class Puzzle {
         const encoder = new TextEncoder();
 
         // encode the parts of the puzzle as arrays of bytes
-        const clueBytes     = encoder.encode(puzzle.#clue);
-        const solutionBytes = encoder.encode(puzzle.#solution);
-        const lettersBytes  = encoder.encode(puzzle.#letters);
+        const clueBytes     = encoder.encode(puzzle.#lines[0].value.toUpperCase());
+        const solutionBytes = encoder.encode(puzzle.#lines[1].value.toUpperCase());
+        const lettersBytes  = encoder.encode(puzzle.#lines[2].value.toUpperCase());
 
         // encode the arrays of bytes as base64 strings
         return [
@@ -224,9 +244,9 @@ export class Puzzle {
         const lettersBytes  = new Uint8Array(Array.from(atob(encodedPuzzle[2])).map((x) => x.charCodeAt()));
 
         // decode the arrays of bytes as parts of the puzzle
-        const clue     = decoder.decode(clueBytes);
-        const solution = decoder.decode(solutionBytes);
-        const letters  = decoder.decode(lettersBytes);
+        const clue     = decoder.decode(clueBytes).toUpperCase();
+        const solution = decoder.decode(solutionBytes).toUpperCase();
+        const letters  = decoder.decode(lettersBytes).toUpperCase();
 
         return new Puzzle(clue, solution, letters);
     }

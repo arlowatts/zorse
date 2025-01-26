@@ -1,54 +1,43 @@
-import { tileDisplay } from "./tileDisplay.js";
+import { createHTML } from "./tileDisplay.js";
 import { Puzzle } from "./puzzle.js";
 
 export class Creator {
-    #layout = [[], ["CLUE", []], ["SOLUTION", []], ["REVEALED LETTERS", []], [[["Share"]]], [[["Play"]]], []];
+    #elements = { tag: "div", styles: ["wrapper"], children: [
+        { tag: "div", styles: [], children: [] },
+        { tag: "div", styles: [], children: ["CLUE", { tag: "input", styles: ["border"], children: [] }] },
+        { tag: "div", styles: [], children: ["SOLUTION", { tag: "input", styles: ["border"], children: [] }] },
+        { tag: "div", styles: [], children: ["REVEALED LETTERS", { tag: "input", styles: ["border"], children: [] }] },
+        { tag: "div", styles: [], children: [{ tag: "div", styles: ["border", "box", "button"], children: ["Share"] }] },
+        { tag: "div", styles: [], children: [{ tag: "div", styles: ["border", "box", "button"], children: ["Play"] }] },
+        { tag: "div", styles: [], children: [] },
+    ] };
 
-    #cssClasses = [["wrapper"], [], [], ["border", "box", "button"]];
+    #clue = this.#elements.children[1].children[1];
+    #solution = this.#elements.children[2].children[1];
+    #letters = this.#elements.children[3].children[1];
 
-    #refs = [[], [], [], []];
+    #shareButton = this.#elements.children[4].children[0];
+    #playButton = this.#elements.children[5].children[0];
 
-    #puzzle;
+    constructor(wrapper) {
+        createHTML(this.#elements, wrapper);
 
-    constructor(puzzle) {
-        this.#puzzle = puzzle;
-    }
+        const puzzle = new Puzzle([this.#clue.ref, this.#solution.ref, this.#letters.ref]);
 
-    initializeDisplay(wrapper) {
-        tileDisplay(this.#layout, this.#cssClasses, wrapper, this.#refs);
+        this.#shareButton.ref.addEventListener("click", () => {
+            navigator.clipboard.writeText(Puzzle.shareURL(puzzle));
 
-        for (let i = 0; i < Puzzle.paramNames.length; i++) {
-            this.#refs[2][i].insertAdjacentHTML("beforeend", "<input type=\"text\" class=\"border\">");
-            this.#refs[2][i].firstElementChild.value = this.#puzzle.getLines()[i];
-        }
-    }
+            this.#shareButton.ref.textContent = "Copied!";
+            setTimeout(() => { this.#shareButton.ref.textContent = this.#shareButton.children[0]; }, 2000);
+        });
 
-    initializeEventListeners() {
-        this.#refs[3][0].addEventListener("click", (e) => { this.share(e); });
-        this.#refs[3][1].addEventListener("click", () => { this.submit(); });
-        addEventListener("keydown", (e) => { if (e.key === "Enter") this.submit(); });
-    }
+        this.#playButton.ref.addEventListener("click", () => {
+            location = Puzzle.getURL(puzzle);
+        });
 
-    share(e) {
-        navigator.clipboard.writeText("\"" + this.#refs[2][0].children[0].value.toUpperCase() + "\"\n" + location.origin + location.pathname + "?" + this.getSearchParams());
-        e.target.textContent = "Copied!";
-    }
-
-    submit() {
-        location = location.origin + location.pathname + "?" + this.getSearchParams();
-    }
-
-    getSearchParams() {
-        const values = this.#refs[2].slice(0, 3).map((x) => x.children[0].value);
-
-        const puzzle = new Puzzle(values[0], values[1], values[2]);
-        const encodedPuzzle = Puzzle.encode(puzzle);
-
-        const searchParams = new URLSearchParams();
-
-        for (let i = 0; i < Puzzle.paramNames.length; i++)
-            searchParams.set(Puzzle.paramNames[i], encodedPuzzle[i]);
-
-        return searchParams;
+        addEventListener("keydown", (e) => {
+            if (e.key === "Enter")
+                location = Puzzle.getURL(puzzle);
+        });
     }
 }
