@@ -65,7 +65,7 @@ export class Puzzle {
             this.#refs[2][i].addEventListener("click", () => { this.revealLetter(this.#solutionFlat[i]); });
         }
 
-        for (let i = 0; i < this.#lines[2].length; i++) {
+        for (let i = 0; i < this.#lines[2].value.length; i++) {
             this.revealLetter(this.#lines[2].value[i], false);
         }
     }
