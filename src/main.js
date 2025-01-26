@@ -14,11 +14,17 @@ function main() {
 
     const puzzle = Puzzle.decode(encodedPuzzle);
 
+    const shareButton = document.getElementById("sharebutton");
+
+    shareButton.addEventListener("click", () => {
+        navigator.clipboard.writeText(Puzzle.shareURL(puzzle));
+
+        shareButton.textContent = "Copied!";
+        setTimeout(() => { shareButton.textContent = "Share this zorse"; }, 2000);
+    });
+
     if (!encodedPuzzle[1]) {
         const creator = new Creator(document.body);
-
-        // creator.initializeDisplay(document.body);
-        // creator.initializeEventListeners();
     }
     else {
         const keyboard = new Keyboard();
