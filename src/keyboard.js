@@ -52,8 +52,16 @@ export class Keyboard {
     initializeEventListeners() {
         addEventListener("keydown", (e) => { if (!e.ctrlKey) this.keyDown(e.key.toUpperCase()); });
 
-        for (let i = 0; i < this.#layoutFlat.length; i++)
-            this.#refs[2][i].addEventListener("click", () => { this.keyDown(this.#layoutFlat[i]); });
+        for (let i = 0; i < this.#layoutFlat.length; i++) {
+            this.#refs[2][i].addEventListener("pointerdown", (e) => {
+                e.target.style["background-color"] = "lightgray";
+                this.keyDown(this.#layoutFlat[i]);
+            });
+
+            this.#refs[2][i].addEventListener("pointerup", (e) => {
+                e.target.style["background-color"] = "transparent";
+            });
+        }
     }
 
     addTarget(target) {
