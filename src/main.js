@@ -30,12 +30,12 @@ function main() {
         const keyboard = new Keyboard();
 
         puzzle.initializeDisplay(document.body);
-        puzzle.initializeEventListeners();
-
         keyboard.initializeDisplay(document.body);
-        keyboard.initializeEventListeners();
 
         puzzle.addTarget(keyboard);
         keyboard.addTarget(puzzle);
+
+        puzzle.initializeEventListeners();
+        keyboard.initializeEventListeners();
     }
 }
