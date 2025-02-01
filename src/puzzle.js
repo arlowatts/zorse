@@ -175,8 +175,7 @@ export class Puzzle {
         tileDisplay([[this.#lines[1].value], [score], [["Share"]]], [["message"], [], ["border", "box", "button"]], this.#refs[0][0].parentElement, messageRef);
 
         messageRef[2][0].addEventListener("click", (e) => {
-            navigator.clipboard.writeText("\"" + this.#lines[0].value + "\"\n" + score);
-            e.target.textContent = "Copied!";
+            navigator.share({ text: "\"" + this.#lines[0].value + "\"\n" + score });
         });
     }
 
@@ -205,9 +204,7 @@ export class Puzzle {
     }
 
     static getURL(puzzle) {
-        console.log(puzzle.#lines);
         const encodedPuzzle = Puzzle.encode(puzzle);
-        console.log(encodedPuzzle);
 
         const searchParams = new URLSearchParams();
 

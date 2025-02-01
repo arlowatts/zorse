@@ -17,10 +17,7 @@ function main() {
     const shareButton = document.getElementById("sharebutton");
 
     shareButton.addEventListener("click", () => {
-        navigator.clipboard.writeText(Puzzle.shareURL(puzzle));
-
-        shareButton.textContent = "Copied!";
-        setTimeout(() => { shareButton.textContent = "Share this zorse"; }, 2000);
+        navigator.share({ text: Puzzle.shareURL(puzzle) });
     });
 
     if (!encodedPuzzle[1]) {

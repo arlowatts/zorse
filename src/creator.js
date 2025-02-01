@@ -25,10 +25,7 @@ export class Creator {
         const puzzle = new Puzzle([this.#clue.ref, this.#solution.ref, this.#letters.ref]);
 
         this.#shareButton.ref.addEventListener("click", () => {
-            navigator.clipboard.writeText(Puzzle.shareURL(puzzle));
-
-            this.#shareButton.ref.textContent = "Copied!";
-            setTimeout(() => { this.#shareButton.ref.textContent = this.#shareButton.children[0]; }, 2000);
+            navigator.share({ text: Puzzle.shareURL(puzzle) });
         });
 
         this.#playButton.ref.addEventListener("click", () => {
