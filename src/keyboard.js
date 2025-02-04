@@ -27,7 +27,7 @@ export class Keyboard {
         this.#refs[2][19].style.width = "15%";
         this.#refs[2][19].style.visibility = "hidden";
         this.#refs[2][27].style.width = "15%";
-        this.#refs[2][28].style.width = "50%";
+        this.#refs[2][28].style.width = "100%";
     }
 
     clearDisplay() {
