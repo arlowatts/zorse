@@ -1,16 +1,25 @@
-import { tileDisplay } from "./tileDisplay.js";
+import { createHTML } from "./tileDisplay.js";
 
 export const paramNames = ["c", "s", "l"];
 
 const regexSpace = / +/;
 const regexTile = /^[A-Z]$/;
 
-const cssClassesClue       = [["text"]];
-const cssClassesSolution   = [[], ["word"], ["border", "box", "tile"]];
-const cssClassesIndicators = [[], ["border", "indicator"]];
+const elements = { tag: "div", styles: ["wrapper"], children: [
+    { tag: "div", styles: [], children: [] },
+    { tag: "div", styles: [], children: [] },
+    { tag: "div", styles: [], children: [] },
+    { tag: "div", styles: [], children: [] },
+    { tag: "div", styles: [], children: [] },
+] };
 
-const refs = [[], [], []];
-const refsIndicators = [[], []];
+const clueWrapper = elements.children[1];
+const solutionWrapper = elements.children[2];
+const indicatorsWrapper = elements.children[3];
+
+const stylesWord = ["word"];
+const stylesTile = ["border", "box", "tile"];
+const stylesIndicator = ["border", "indicator"];
 
 const emoji = [0x1F984, 0x1F3A0, 0x1F3C7, 0x1F40E, 0x1F993, 0x1F434];
 const letterEmoji = 0x2709;
@@ -20,9 +29,6 @@ const shrugEmoji = 0x1F937;
 let lines = [];
 
 // the processed solution
-let solutionNested;
-let solutionFlat;
-let indicators;
 let revealedLetters = [];
 let reveals = 0;
 let maxReveals = 5;
@@ -39,34 +45,45 @@ export function loadPuzzle(clue, solution, letters) {
         lines[1] = {value: solution.toUpperCase()};
         lines[2] = {value: letters.toUpperCase()};
     }
-
-    solutionNested =
-        lines[1].value
-        .split(regexSpace)
-        .map((x) => Array.from(x).map((y) => y.match(regexTile) ? [] : y));
-
-    solutionFlat = Array.from(lines[1].value).filter((x) => x.match(regexTile));
-
-    indicators = [];
-
-    for (let i = 0; i < maxReveals; i++)
-        indicators.push([]);
 }
 
+// create the HTML elements showing the puzzle
 export function initializeDisplay(wrapper) {
-    tileDisplay([lines[0].value], cssClassesClue, wrapper);
-    tileDisplay(solutionNested, cssClassesSolution, wrapper, refs);
-    tileDisplay(indicators, cssClassesIndicators, wrapper, refsIndicators);
+
+    // add the puzzle's clue as text
+    clueWrapper.children.push(lines[0].value);
+
+    for (const word of lines[1].value.split(regexSpace)) {
+
+        // add a word to the solution
+        const wordWrapper = { tag: "div", styles: stylesWord, children: [] };
+
+        // add a tile or raw character to the word
+        for (const character of word) {
+            if (character.match(regexTile))
+                wordWrapper.children.push({ tag: "div", styles: stylesTile, children: [], data: character });
+            else
+                wordWrapper.children.push(character);
+        }
+
+        solutionWrapper.children.push(wordWrapper);
+    }
+
+    // add the reveal indicators
+    for (let i = 0; i < maxReveals; i++)
+        indicatorsWrapper.children.push({ tag: "div", styles: stylesIndicator, children: [] });
+
+    createHTML(elements, wrapper);
 }
 
 export function initializeEventListeners() {
-    for (let i = 0; i < solutionFlat.length; i++) {
-        refs[2][i].addEventListener("click", () => { revealLetter(solutionFlat[i]); });
-    }
+    for (const wordWrapper of solutionWrapper.children)
+        for (const tile of wordWrapper.children)
+            if (tile.data)
+                tile.ref.addEventListener("click", () => { revealLetter(tile.data); });
 
-    for (let i = 0; i < lines[2].value.length; i++) {
-        revealLetter(lines[2].value[i], false);
-    }
+    for (const letter of lines[2].value)
+        revealLetter(letter, false);
 }
 
 function revealLetter(letter, updateCounter = true) {
@@ -74,21 +91,25 @@ function revealLetter(letter, updateCounter = true) {
         revealedLetters.push(letter);
 
         if (updateCounter) {
-            refsIndicators[1][reveals].classList.add("filled");
+            indicatorsWrapper.children[reveals].ref.classList.add("filled");
             reveals++;
         }
 
         for (let i = 0; i < targets.length; i++)
             targets[i].lockKey(letter);
 
-        for (let i = 0; i < solutionFlat.length; i++) {
-            if (solutionFlat[i] === letter) {
-                refs[2][i].classList.add("filled");
-                refs[2][i].textContent = letter;
-            }
+        for (const wordWrapper of solutionWrapper.children) {
+            for (const tile of wordWrapper.children) {
+                if (tile.data) {
+                    if (tile.data === letter) {
+                        tile.ref.classList.add("filled");
+                        tile.ref.textContent = letter;
+                    }
 
-            else if (refs[2][i].textContent === letter)
-                refs[2][i].textContent = "";
+                    else if (tile.ref.textContent === letter)
+                        tile.ref.textContent = "";
+                }
+            }
         }
     }
 
@@ -102,30 +123,36 @@ function revealLetter(letter, updateCounter = true) {
 
 export function addLetter(letter) {
     if (letter.match(regexTile) && !revealedLetters.includes(letter)) {
-        for (let i = 0; i < solutionFlat.length; i++) {
-            if (!refs[2][i].textContent) {
-                refs[2][i].textContent = letter;
-                break;
+        for (const wordWrapper of solutionWrapper.children) {
+            for (const tile of wordWrapper.children) {
+                if (tile.data && !tile.ref.textContent) {
+                    tile.ref.textContent = letter;
+
+                    if (isComplete())
+                        for (let i = 0; i < targets.length; i++)
+                            targets[i].unlockKey("ENTER");
+
+                    return;
+                }
             }
         }
     }
-
-    if (isComplete())
-        for (let i = 0; i < targets.length; i++)
-            targets[i].unlockKey("ENTER");
 }
 
 export function removeLetter() {
-    for (let i = solutionFlat.length - 1; i >= 0; i--) {
-        if (!revealedLetters.includes(solutionFlat[i]) && refs[2][i].textContent) {
-            refs[2][i].textContent = "";
-            break;
+    for (const wordWrapper of solutionWrapper.children.toReversed()) {
+        for (const tile of wordWrapper.children.toReversed()) {
+            if (tile.data && !revealedLetters.includes(tile.data) && tile.ref.textContent) {
+                tile.ref.textContent = "";
+
+                if (!isComplete())
+                    for (let i = 0; i < targets.length; i++)
+                        targets[i].lockKey("ENTER");
+
+                return;
+            }
         }
     }
-
-    if (!isComplete())
-        for (let i = 0; i < targets.length; i++)
-            targets[i].lockKey("ENTER");
 }
 
 export function submit() {
@@ -133,15 +160,19 @@ export function submit() {
         submitted = true;
         let correct = true;
 
-        for (let i = 0; i < solutionFlat.length; i++) {
-            if (!revealedLetters.includes(solutionFlat[i]))
-                revealedLetters.push(solutionFlat[i]);
+        for (const wordWrapper of solutionWrapper.children) {
+            for (const tile of wordWrapper.children) {
+                if (tile.data) {
+                    if (!revealedLetters.includes(tile.data))
+                        revealedLetters.push(tile.data);
 
-            if (refs[2][i].textContent === solutionFlat[i])
-                refs[2][i].classList.add("filled");
-            else {
-                refs[2][i].classList.add("locked");
-                correct = false;
+                    if (tile.data === tile.ref.textContent)
+                        tile.ref.classList.add("filled");
+                    else {
+                        tile.ref.classList.add("locked");
+                        correct = false;
+                    }
+                }
             }
         }
 
@@ -157,10 +188,12 @@ export function submit() {
 function isComplete() {
     let complete = true;
 
-    for (let i = 0; i < solutionFlat.length; i++) {
-        if (!refs[2][i].textContent) {
-            complete = false;
-            break;
+    for (const wordWrapper of solutionWrapper.children) {
+        for (const tile of wordWrapper.children) {
+            if (tile.data && !tile.ref.textContent) {
+                complete = false;
+                break;
+            }
         }
     }
 
@@ -169,11 +202,16 @@ function isComplete() {
 
 function displayMessage(correct) {
     const score = getScore(correct);
-    const messageRef = [[], [], []];
 
-    tileDisplay([[lines[1].value], [score], [["Share"]]], [["message"], [], ["border", "box", "button"]], refs[0][0].parentElement, messageRef);
+    const messageElements = { tag: "div", styles: ["message"], children: [
+        { tag: "div", styles: [], children: [lines[1].value] },
+        { tag: "div", styles: [], children: [score] },
+        { tag: "div", styles: ["border", "box", "button"], children: ["Share"] },
+    ] };
 
-    messageRef[2][0].addEventListener("click", (e) => {
+    createHTML(messageElements, elements.ref.parentElement);
+
+    messageElements.children[2].ref.addEventListener("click", (e) => {
         navigator.share({ text: "\"" + lines[0].value + "\"\n" + score });
     });
 }
