@@ -1,250 +1,248 @@
 import { tileDisplay } from "./tileDisplay.js";
 
-export class Puzzle {
-    static paramNames = ["c", "s", "l"];
+export const paramNames = ["c", "s", "l"];
 
-    static regexSpace = / +/;
-    static regexTile = /^[A-Z]$/;
+const regexSpace = / +/;
+const regexTile = /^[A-Z]$/;
 
-    #cssClassesClue       = [["text"]];
-    #cssClassesSolution   = [[], ["word"], ["border", "box", "tile"]];
-    #cssClassesIndicators = [[], ["border", "indicator"]];
+const cssClassesClue       = [["text"]];
+const cssClassesSolution   = [[], ["word"], ["border", "box", "tile"]];
+const cssClassesIndicators = [[], ["border", "indicator"]];
 
-    #refs = [[], [], []];
-    #refsIndicators = [[], []];
+const refs = [[], [], []];
+const refsIndicators = [[], []];
 
-    #emoji = [0x1F984, 0x1F3A0, 0x1F3C7, 0x1F40E, 0x1F993, 0x1F434];
-    #letterEmoji = 0x2709;
-    #shrugEmoji = 0x1F937;
+const emoji = [0x1F984, 0x1F3A0, 0x1F3C7, 0x1F40E, 0x1F993, 0x1F434];
+const letterEmoji = 0x2709;
+const shrugEmoji = 0x1F937;
 
-    // elements of the puzzle
-    #lines = [];
+// elements of the puzzle
+let lines = [];
 
-    // the processed solution
-    #solutionNested;
-    #solutionFlat;
-    #indicators;
-    #revealedLetters = [];
-    #reveals = 0;
-    #maxReveals = 5;
+// the processed solution
+let solutionNested;
+let solutionFlat;
+let indicators;
+let revealedLetters = [];
+let reveals = 0;
+let maxReveals = 5;
 
-    #targets = [];
-    #submitted = false;
+let targets = [];
+let submitted = false;
 
-    constructor(clue, solution, letters) {
-        if (!(typeof clue === "string")) {
-            this.#lines = clue;
-        }
-        else {
-            this.#lines[0] = {value: clue.toUpperCase()};
-            this.#lines[1] = {value: solution.toUpperCase()};
-            this.#lines[2] = {value: letters.toUpperCase()};
-        }
-
-        this.#solutionNested =
-            this.#lines[1].value
-            .split(Puzzle.regexSpace)
-            .map((x) => Array.from(x).map((y) => y.match(Puzzle.regexTile) ? [] : y));
-
-        this.#solutionFlat = Array.from(this.#lines[1].value).filter((x) => x.match(Puzzle.regexTile));
-
-        this.#indicators = [];
-
-        for (let i = 0; i < this.#maxReveals; i++)
-            this.#indicators.push([]);
+export function loadPuzzle(clue, solution, letters) {
+    if (!(typeof clue === "string")) {
+        lines = clue;
+    }
+    else {
+        lines[0] = {value: clue.toUpperCase()};
+        lines[1] = {value: solution.toUpperCase()};
+        lines[2] = {value: letters.toUpperCase()};
     }
 
-    initializeDisplay(wrapper) {
-        tileDisplay([this.#lines[0].value], this.#cssClassesClue, wrapper);
-        tileDisplay(this.#solutionNested, this.#cssClassesSolution, wrapper, this.#refs);
-        tileDisplay(this.#indicators, this.#cssClassesIndicators, wrapper, this.#refsIndicators);
+    solutionNested =
+        lines[1].value
+        .split(regexSpace)
+        .map((x) => Array.from(x).map((y) => y.match(regexTile) ? [] : y));
+
+    solutionFlat = Array.from(lines[1].value).filter((x) => x.match(regexTile));
+
+    indicators = [];
+
+    for (let i = 0; i < maxReveals; i++)
+        indicators.push([]);
+}
+
+export function initializeDisplay(wrapper) {
+    tileDisplay([lines[0].value], cssClassesClue, wrapper);
+    tileDisplay(solutionNested, cssClassesSolution, wrapper, refs);
+    tileDisplay(indicators, cssClassesIndicators, wrapper, refsIndicators);
+}
+
+export function initializeEventListeners() {
+    for (let i = 0; i < solutionFlat.length; i++) {
+        refs[2][i].addEventListener("click", () => { revealLetter(solutionFlat[i]); });
     }
 
-    initializeEventListeners() {
-        for (let i = 0; i < this.#solutionFlat.length; i++) {
-            this.#refs[2][i].addEventListener("click", () => { this.revealLetter(this.#solutionFlat[i]); });
-        }
-
-        for (let i = 0; i < this.#lines[2].value.length; i++) {
-            this.revealLetter(this.#lines[2].value[i], false);
-        }
+    for (let i = 0; i < lines[2].value.length; i++) {
+        revealLetter(lines[2].value[i], false);
     }
+}
 
-    revealLetter(letter, updateCounter = true) {
-        if (letter.match(Puzzle.regexTile) && !this.#revealedLetters.includes(letter) && this.#reveals < this.#maxReveals) {
-            this.#revealedLetters.push(letter);
+function revealLetter(letter, updateCounter = true) {
+    if (letter.match(regexTile) && !revealedLetters.includes(letter) && reveals < maxReveals) {
+        revealedLetters.push(letter);
 
-            if (updateCounter) {
-                this.#refsIndicators[1][this.#reveals].classList.add("filled");
-                this.#reveals++;
+        if (updateCounter) {
+            refsIndicators[1][reveals].classList.add("filled");
+            reveals++;
+        }
+
+        for (let i = 0; i < targets.length; i++)
+            targets[i].lockKey(letter);
+
+        for (let i = 0; i < solutionFlat.length; i++) {
+            if (solutionFlat[i] === letter) {
+                refs[2][i].classList.add("filled");
+                refs[2][i].textContent = letter;
             }
 
-            for (let i = 0; i < this.#targets.length; i++)
-                this.#targets[i].lockKey(letter);
-
-            for (let i = 0; i < this.#solutionFlat.length; i++) {
-                if (this.#solutionFlat[i] === letter) {
-                    this.#refs[2][i].classList.add("filled");
-                    this.#refs[2][i].textContent = letter;
-                }
-
-                else if (this.#refs[2][i].textContent === letter)
-                    this.#refs[2][i].textContent = "";
-            }
+            else if (refs[2][i].textContent === letter)
+                refs[2][i].textContent = "";
         }
-
-        if (this.isComplete())
-            for (let i = 0; i < this.#targets.length; i++)
-                this.#targets[i].unlockKey("ENTER");
-        else
-            for (let i = 0; i < this.#targets.length; i++)
-                this.#targets[i].lockKey("ENTER");
     }
 
-    addLetter(letter) {
-        if (letter.match(Puzzle.regexTile) && !this.#revealedLetters.includes(letter)) {
-            for (let i = 0; i < this.#solutionFlat.length; i++) {
-                if (!this.#refs[2][i].textContent) {
-                    this.#refs[2][i].textContent = letter;
-                    break;
-                }
-            }
-        }
+    if (isComplete())
+        for (let i = 0; i < targets.length; i++)
+            targets[i].unlockKey("ENTER");
+    else
+        for (let i = 0; i < targets.length; i++)
+            targets[i].lockKey("ENTER");
+}
 
-        if (this.isComplete())
-            for (let i = 0; i < this.#targets.length; i++)
-                this.#targets[i].unlockKey("ENTER");
-    }
-
-    removeLetter() {
-        for (let i = this.#solutionFlat.length - 1; i >= 0; i--) {
-            if (!this.#revealedLetters.includes(this.#solutionFlat[i]) && this.#refs[2][i].textContent) {
-                this.#refs[2][i].textContent = "";
+export function addLetter(letter) {
+    if (letter.match(regexTile) && !revealedLetters.includes(letter)) {
+        for (let i = 0; i < solutionFlat.length; i++) {
+            if (!refs[2][i].textContent) {
+                refs[2][i].textContent = letter;
                 break;
             }
         }
-
-        if (!this.isComplete())
-            for (let i = 0; i < this.#targets.length; i++)
-                this.#targets[i].lockKey("ENTER");
     }
 
-    submit() {
-        if (!this.#submitted && this.isComplete()) {
-            this.#submitted = true;
-            let correct = true;
+    if (isComplete())
+        for (let i = 0; i < targets.length; i++)
+            targets[i].unlockKey("ENTER");
+}
 
-            for (let i = 0; i < this.#solutionFlat.length; i++) {
-                if (!this.#revealedLetters.includes(this.#solutionFlat[i]))
-                    this.#revealedLetters.push(this.#solutionFlat[i]);
-
-                if (this.#refs[2][i].textContent === this.#solutionFlat[i])
-                    this.#refs[2][i].classList.add("filled");
-                else {
-                    this.#refs[2][i].classList.add("locked");
-                    correct = false;
-                }
-            }
-
-            for (let i = 0; i < this.#targets.length; i++)
-                this.#targets[i].clearDisplay();
-
-            this.#targets = [];
-
-            this.displayMessage(correct);
+export function removeLetter() {
+    for (let i = solutionFlat.length - 1; i >= 0; i--) {
+        if (!revealedLetters.includes(solutionFlat[i]) && refs[2][i].textContent) {
+            refs[2][i].textContent = "";
+            break;
         }
     }
 
-    isComplete() {
-        let complete = true;
+    if (!isComplete())
+        for (let i = 0; i < targets.length; i++)
+            targets[i].lockKey("ENTER");
+}
 
-        for (let i = 0; i < this.#solutionFlat.length; i++) {
-            if (!this.#refs[2][i].textContent) {
-                complete = false;
-                break;
+export function submit() {
+    if (!submitted && isComplete()) {
+        submitted = true;
+        let correct = true;
+
+        for (let i = 0; i < solutionFlat.length; i++) {
+            if (!revealedLetters.includes(solutionFlat[i]))
+                revealedLetters.push(solutionFlat[i]);
+
+            if (refs[2][i].textContent === solutionFlat[i])
+                refs[2][i].classList.add("filled");
+            else {
+                refs[2][i].classList.add("locked");
+                correct = false;
             }
         }
 
-        return complete;
+        for (let i = 0; i < targets.length; i++)
+            targets[i].clearDisplay();
+
+        targets = [];
+
+        displayMessage(correct);
+    }
+}
+
+function isComplete() {
+    let complete = true;
+
+    for (let i = 0; i < solutionFlat.length; i++) {
+        if (!refs[2][i].textContent) {
+            complete = false;
+            break;
+        }
     }
 
-    displayMessage(correct) {
-        const score = this.getScore(correct);
-        const messageRef = [[], [], []];
+    return complete;
+}
 
-        tileDisplay([[this.#lines[1].value], [score], [["Share"]]], [["message"], [], ["border", "box", "button"]], this.#refs[0][0].parentElement, messageRef);
+function displayMessage(correct) {
+    const score = getScore(correct);
+    const messageRef = [[], [], []];
 
-        messageRef[2][0].addEventListener("click", (e) => {
-            navigator.share({ text: "\"" + this.#lines[0].value + "\"\n" + score });
-        });
-    }
+    tileDisplay([[lines[1].value], [score], [["Share"]]], [["message"], [], ["border", "box", "button"]], refs[0][0].parentElement, messageRef);
 
-    getScore(correct) {
-        let score = String.fromCodePoint(this.#letterEmoji).repeat(this.#reveals);
+    messageRef[2][0].addEventListener("click", (e) => {
+        navigator.share({ text: "\"" + lines[0].value + "\"\n" + score });
+    });
+}
 
-        if (correct)
-            score += String.fromCodePoint(this.#emoji[this.#reveals]);
-        else
-            score += String.fromCodePoint(this.#shrugEmoji);
+function getScore(correct) {
+    let score = String.fromCodePoint(letterEmoji).repeat(reveals);
 
-        return score;
-    }
+    if (correct)
+        score += String.fromCodePoint(emoji[reveals]);
+    else
+        score += String.fromCodePoint(shrugEmoji);
 
-    addTarget(target) {
-        this.#targets.push(target);
-        target.lockKey("ENTER");
-    }
+    return score;
+}
 
-    getLines() {
-        return this.#lines;
-    }
+export function addTarget(target) {
+    targets.push(target);
+    target.lockKey("ENTER");
+}
 
-    static shareURL(puzzle) {
-        return "\"" + puzzle.#lines[0].value.toUpperCase() + "\"\n" + Puzzle.getURL(puzzle);
-    }
+function getLines() {
+    return lines;
+}
 
-    static getURL(puzzle) {
-        const encodedPuzzle = Puzzle.encode(puzzle);
+export function shareURL() {
+    return "\"" + lines[0].value.toUpperCase() + "\"\n" + getURL();
+}
 
-        const searchParams = new URLSearchParams();
+export function getURL() {
+    const encodedPuzzle = encode();
 
-        for (let i = 0; i < encodedPuzzle.length; i++)
-            searchParams.set(Puzzle.paramNames[i], encodedPuzzle[i]);
+    const searchParams = new URLSearchParams();
 
-        return location.origin + location.pathname + "?" + searchParams;
-    }
+    for (let i = 0; i < encodedPuzzle.length; i++)
+        searchParams.set(paramNames[i], encodedPuzzle[i]);
 
-    // encode the puzzle as three base64 strings
-    static encode(puzzle) {
-        const encoder = new TextEncoder();
+    return location.origin + location.pathname + "?" + searchParams;
+}
 
-        // encode the parts of the puzzle as arrays of bytes
-        const clueBytes     = encoder.encode(puzzle.#lines[0].value.toUpperCase());
-        const solutionBytes = encoder.encode(puzzle.#lines[1].value.toUpperCase());
-        const lettersBytes  = encoder.encode(puzzle.#lines[2].value.toUpperCase());
+// encode the puzzle as three base64 strings
+export function encode() {
+    const encoder = new TextEncoder();
 
-        // encode the arrays of bytes as base64 strings
-        return [
-            btoa(String.fromCharCode.apply(null, clueBytes)),
-            btoa(String.fromCharCode.apply(null, solutionBytes)),
-            btoa(String.fromCharCode.apply(null, lettersBytes)),
-        ];
-    }
+    // encode the parts of the puzzle as arrays of bytes
+    const clueBytes     = encoder.encode(lines[0].value.toUpperCase());
+    const solutionBytes = encoder.encode(lines[1].value.toUpperCase());
+    const lettersBytes  = encoder.encode(lines[2].value.toUpperCase());
 
-    // decode a puzzle from three url-safe base64 strings
-    static decode(encodedPuzzle) {
-        const decoder = new TextDecoder();
+    // encode the arrays of bytes as base64 strings
+    return [
+        btoa(String.fromCharCode.apply(null, clueBytes)),
+        btoa(String.fromCharCode.apply(null, solutionBytes)),
+        btoa(String.fromCharCode.apply(null, lettersBytes)),
+    ];
+}
 
-        // decode the base64 strings as arrays of bytes
-        const clueBytes     = new Uint8Array(Array.from(atob(encodedPuzzle[0])).map((x) => x.charCodeAt()));
-        const solutionBytes = new Uint8Array(Array.from(atob(encodedPuzzle[1])).map((x) => x.charCodeAt()));
-        const lettersBytes  = new Uint8Array(Array.from(atob(encodedPuzzle[2])).map((x) => x.charCodeAt()));
+// decode a puzzle from three url-safe base64 strings
+export function decode(encodedPuzzle) {
+    const decoder = new TextDecoder();
 
-        // decode the arrays of bytes as parts of the puzzle
-        const clue     = decoder.decode(clueBytes).toUpperCase();
-        const solution = decoder.decode(solutionBytes).toUpperCase();
-        const letters  = decoder.decode(lettersBytes).toUpperCase();
+    // decode the base64 strings as arrays of bytes
+    const clueBytes     = new Uint8Array(Array.from(atob(encodedPuzzle[0])).map((x) => x.charCodeAt()));
+    const solutionBytes = new Uint8Array(Array.from(atob(encodedPuzzle[1])).map((x) => x.charCodeAt()));
+    const lettersBytes  = new Uint8Array(Array.from(atob(encodedPuzzle[2])).map((x) => x.charCodeAt()));
 
-        return new Puzzle(clue, solution, letters);
-    }
+    // decode the arrays of bytes as parts of the puzzle
+    const clue     = decoder.decode(clueBytes).toUpperCase();
+    const solution = decoder.decode(solutionBytes).toUpperCase();
+    const letters  = decoder.decode(lettersBytes).toUpperCase();
+
+    return loadPuzzle(clue, solution, letters);
 }

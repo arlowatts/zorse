@@ -1,5 +1,5 @@
 import { createHTML } from "./tileDisplay.js";
-import { Puzzle } from "./puzzle.js";
+import * as puzzle from "./puzzle.js";
 
 export class Creator {
     #elements = { tag: "div", styles: ["wrapper"], children: [
@@ -22,19 +22,19 @@ export class Creator {
     constructor(wrapper) {
         createHTML(this.#elements, wrapper);
 
-        const puzzle = new Puzzle([this.#clue.ref, this.#solution.ref, this.#letters.ref]);
+        puzzle.loadPuzzle([this.#clue.ref, this.#solution.ref, this.#letters.ref]);
 
         this.#shareButton.ref.addEventListener("click", () => {
-            navigator.share({ text: Puzzle.shareURL(puzzle) });
+            navigator.share({ text: puzzle.shareURL() });
         });
 
         this.#playButton.ref.addEventListener("click", () => {
-            location = Puzzle.getURL(puzzle);
+            location = puzzle.getURL();
         });
 
         addEventListener("keydown", (e) => {
             if (e.key === "Enter")
-                location = Puzzle.getURL(puzzle);
+                location = puzzle.getURL();
         });
     }
 }

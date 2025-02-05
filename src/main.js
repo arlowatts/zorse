@@ -1,4 +1,4 @@
-import { Puzzle } from "./puzzle.js";
+import * as puzzle from "./puzzle.js";
 import { Keyboard } from "./keyboard.js";
 import { Creator } from "./creator.js";
 
@@ -9,15 +9,15 @@ function main() {
 
     const encodedPuzzle = [];
 
-    for (let i = 0; i < Puzzle.paramNames.length; i++)
-        encodedPuzzle.push(searchParams.get(Puzzle.paramNames[i]) || "");
+    for (let i = 0; i < puzzle.paramNames.length; i++)
+        encodedPuzzle.push(searchParams.get(puzzle.paramNames[i]) || "");
 
-    const puzzle = Puzzle.decode(encodedPuzzle);
+    puzzle.decode(encodedPuzzle);
 
     const shareButton = document.getElementById("sharebutton");
 
     shareButton.addEventListener("click", () => {
-        navigator.share({ text: Puzzle.shareURL(puzzle) });
+        navigator.share({ text: puzzle.shareURL() });
     });
 
     if (!encodedPuzzle[1]) {
