@@ -14,7 +14,7 @@ function main() {
 
     puzzle.decode(encodedPuzzle);
 
-    const shareButton = document.getElementById("sharebutton");
+    const shareButton = document.getElementById("share-button");
 
     shareButton.addEventListener("click", () => {
         navigator.share({ text: puzzle.shareURL() });

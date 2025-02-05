@@ -15,7 +15,7 @@ export class Keyboard {
         "ENTER",
     ];
 
-    #cssClasses = [[], [], ["border", "box", "key"]];
+    #cssClasses = [[], [], ["border", "tile", "key"]];
 
     #targets = [];
 

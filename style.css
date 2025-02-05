@@ -14,12 +14,12 @@
     border-radius: 0.25em;
     box-sizing: border-box;
 
-    &.box {
+    &.tile {
         display: inline-block;
         vertical-align: top;
         cursor: pointer;
 
-        &.tile {
+        &.letter {
             width: 1.2em;
             height: 1.5em;
             line-height: 1.3em;

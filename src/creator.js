@@ -7,8 +7,8 @@ export class Creator {
         { tag: "div", styles: [], children: ["CLUE", { tag: "input", styles: ["border"], children: [] }] },
         { tag: "div", styles: [], children: ["SOLUTION", { tag: "input", styles: ["border"], children: [] }] },
         { tag: "div", styles: [], children: ["REVEALED LETTERS", { tag: "input", styles: ["border"], children: [] }] },
-        { tag: "div", styles: [], children: [{ tag: "div", styles: ["border", "box", "button"], children: ["Share"] }] },
-        { tag: "div", styles: [], children: [{ tag: "div", styles: ["border", "box", "button"], children: ["Play"] }] },
+        { tag: "div", styles: [], children: [{ tag: "div", styles: ["border", "tile", "button"], children: ["Share"] }] },
+        { tag: "div", styles: [], children: [{ tag: "div", styles: ["border", "tile", "button"], children: ["Play"] }] },
         { tag: "div", styles: [], children: [] },
     ] };
 

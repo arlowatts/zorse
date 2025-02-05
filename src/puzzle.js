@@ -18,7 +18,7 @@ const solutionWrapper = elements.children[2];
 const indicatorsWrapper = elements.children[3];
 
 const stylesWord = ["word"];
-const stylesTile = ["border", "box", "tile"];
+const stylesTile = ["border", "tile", "letter"];
 const stylesIndicator = ["border", "indicator"];
 
 const emoji = [0x1F984, 0x1F3A0, 0x1F3C7, 0x1F40E, 0x1F993, 0x1F434];
@@ -206,7 +206,7 @@ function displayMessage(correct) {
     const messageElements = { tag: "div", styles: ["message"], children: [
         { tag: "div", styles: [], children: [lines[1].value] },
         { tag: "div", styles: [], children: [score] },
-        { tag: "div", styles: ["border", "box", "button"], children: ["Share"] },
+        { tag: "div", styles: ["border", "tile", "button"], children: ["Share"] },
     ] };
 
     createHTML(messageElements, elements.ref.parentElement);
