@@ -1,4 +1,4 @@
-import { createHTML } from "./tileDisplay.js";
+import { createHTML } from "./createHTML.js";
 import * as puzzle from "./puzzle.js";
 
 export class Creator {

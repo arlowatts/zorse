@@ -1,4 +1,4 @@
-import { tileDisplay } from "./tileDisplay.js";
+import { tileDisplay } from "./createHTML.js";
 
 export class Keyboard {
     #layout = [

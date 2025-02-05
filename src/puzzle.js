@@ -1,4 +1,4 @@
-import { createHTML } from "./tileDisplay.js";
+import { createHTML } from "./createHTML.js";
 
 export const paramNames = ["c", "s", "l"];
 
