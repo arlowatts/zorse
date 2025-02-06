@@ -3,7 +3,6 @@
     <head>
         <title>How to play | Zorse</title>
         <link rel="stylesheet" href="../style.css">
-        <script src="../src/tutorial.js" type="module"></script>
     </head>
     <body class="wrapper">
         <div></div>
@@ -12,5 +11,9 @@
         <p>When you're ready, type in your guess and press the "Submit" button.</p>
         <div><div id="back-button" class="border tile button">Back</div></div>
         <div></div>
+        <script>
+addEventListener("keydown", (e) => { if (e.key === "Enter") window.history.back(); });
+document.getElementById("back-button").addEventListener("click", () => { window.history.back(); });
+        </script>
     </body>
 </html>
