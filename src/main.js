@@ -1,6 +1,6 @@
 import * as puzzle from "./puzzle.js";
 import * as keyboard from "./keyboard.js";
-import { Creator } from "./creator.js";
+import * as creator from "./creator.js";
 
 addEventListener("load", main);
 
@@ -21,7 +21,7 @@ function main() {
     });
 
     if (!encodedPuzzle[1]) {
-        const creator = new Creator(document.body);
+        creator.initializeDisplay(document.body);
     }
     else {
         puzzle.initializeDisplay(document.body);
