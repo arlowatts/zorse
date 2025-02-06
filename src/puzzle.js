@@ -34,7 +34,11 @@ const letterEmoji = 0x2709;
 const shrugEmoji = 0x1F937;
 
 // elements of the puzzle
-let lines = [];
+const puzzle = {
+    clue: "",
+    solution: "",
+    letters: "",
+};
 
 // the processed solution
 let revealedLetters = [];
@@ -43,27 +47,22 @@ let maxReveals = 5;
 
 let submitted = false;
 
-export function loadPuzzle(clue, solution, letters) {
-    if (!(typeof clue === "string")) {
-        lines = clue;
-    }
-    else {
-        lines[0] = {value: clue.toUpperCase()};
-        lines[1] = {value: solution.toUpperCase()};
-        lines[2] = {value: letters.toUpperCase()};
-    }
+export function set(clue, solution, letters) {
+    puzzle.clue = clue.toUpperCase();
+    puzzle.solution = solution.toUpperCase();
+    puzzle.letters = letters.toUpperCase();
 
     clueWrapper.children = [];
     solutionWrapper.children = [];
     indicatorsWrapper.children = [];
     messageSolutionWrapper.children = [];
 
-    messageSolutionWrapper.children.push(lines[1].value);
+    messageSolutionWrapper.children.push(puzzle.solution);
 
     // add the puzzle's clue as text
-    clueWrapper.children.push(lines[0].value);
+    clueWrapper.children.push(puzzle.clue);
 
-    for (const word of lines[1].value.split(regexSpace)) {
+    for (const word of puzzle.solution.split(regexSpace)) {
 
         // add a word to the solution
         const wordWrapper = { styles: stylesWord, children: [] };
@@ -90,11 +89,11 @@ export function initializeEventListeners() {
             if (tile.data)
                 tile.ref.addEventListener("click", () => { revealLetter(tile.data); });
 
-    for (const letter of lines[2].value)
+    for (const letter of puzzle.letters)
         revealLetter(letter, false);
 
     shareWrapper.ref.addEventListener("click", () => {
-        navigator.share({ text: "\"" + lines[0].value + "\"\n" + score });
+        navigator.share({ text: "\"" + puzzle.clue + "\"\n" + getScore() });
     });
 }
 
@@ -220,7 +219,7 @@ function getScore(correct) {
 }
 
 export function shareURL() {
-    return "\"" + lines[0].value.toUpperCase() + "\"\n" + getURL();
+    return "\"" + puzzle.clue.toUpperCase() + "\"\n" + getURL();
 }
 
 export function getURL() {
@@ -239,9 +238,9 @@ export function encode() {
     const encoder = new TextEncoder();
 
     // encode the parts of the puzzle as arrays of bytes
-    const clueBytes     = encoder.encode(lines[0].value.toUpperCase());
-    const solutionBytes = encoder.encode(lines[1].value.toUpperCase());
-    const lettersBytes  = encoder.encode(lines[2].value.toUpperCase());
+    const clueBytes     = encoder.encode(puzzle.clue.toUpperCase());
+    const solutionBytes = encoder.encode(puzzle.solution.toUpperCase());
+    const lettersBytes  = encoder.encode(puzzle.letters.toUpperCase());
 
     // encode the arrays of bytes as base64 strings
     return [
@@ -251,7 +250,7 @@ export function encode() {
     ];
 }
 
-// decode a puzzle from three url-safe base64 strings
+// decode a puzzle from three base64 strings
 export function decode(encodedPuzzle) {
     const decoder = new TextDecoder();
 
@@ -265,5 +264,6 @@ export function decode(encodedPuzzle) {
     const solution = decoder.decode(solutionBytes).toUpperCase();
     const letters  = decoder.decode(lettersBytes).toUpperCase();
 
-    return loadPuzzle(clue, solution, letters);
+    // load the puzzle
+    set(clue, solution, letters);
 }

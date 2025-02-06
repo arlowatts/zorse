@@ -19,22 +19,24 @@ const wrappers = {
 };
 
 export function initializeEventListeners() {
-    // set the puzzle parameters
-    puzzle.loadPuzzle([wrappers.clue.ref, wrappers.solution.ref, wrappers.letters.ref]);
 
     // share the puzzle URL when the share button is clicked
     wrappers.share.ref.addEventListener("click", () => {
+        puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
         navigator.share({ text: puzzle.shareURL() });
     });
 
     // navigate to the puzzle page when the play button is clicked
     wrappers.play.ref.addEventListener("click", () => {
+        puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
         location = puzzle.getURL();
     });
 
     // navigate to the puzzle page when the enter key is pressed
     addEventListener("keydown", (e) => {
-        if (e.key === "Enter")
+        if (e.key === "Enter") {
+            puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
             location = puzzle.getURL();
+        }
     });
 }
