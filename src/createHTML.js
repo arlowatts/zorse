@@ -3,13 +3,15 @@ export function createHTML(element, wrapper) {
         wrapper.append(element);
 
     else {
-        element.ref = document.createElement(element.tag);
+        element.ref = document.createElement(element.tag || "div");
 
-        for (const style of element.styles)
-            element.ref.classList.add(style);
+        if (element.styles)
+            for (const style of element.styles)
+                element.ref.classList.add(style);
 
-        for (const child of element.children)
-            createHTML(child, element.ref);
+        if (element.children)
+            for (const child of element.children)
+                createHTML(child, element.ref);
 
         wrapper.append(element.ref);
     }

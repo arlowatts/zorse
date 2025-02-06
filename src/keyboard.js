@@ -2,42 +2,42 @@ import { createHTML } from "./createHTML.js";
 
 const STYLES_KEY = ["border", "tile", "key"];
 
-const elements = { tag: "div", styles: [], children: [
-    { tag: "div", styles: [], children: [
-        { tag: "div", styles: STYLES_KEY, children: ["Q"], data: "Q" },
-        { tag: "div", styles: STYLES_KEY, children: ["W"], data: "W" },
-        { tag: "div", styles: STYLES_KEY, children: ["E"], data: "E" },
-        { tag: "div", styles: STYLES_KEY, children: ["R"], data: "R" },
-        { tag: "div", styles: STYLES_KEY, children: ["T"], data: "T" },
-        { tag: "div", styles: STYLES_KEY, children: ["Y"], data: "Y" },
-        { tag: "div", styles: STYLES_KEY, children: ["U"], data: "U" },
-        { tag: "div", styles: STYLES_KEY, children: ["I"], data: "I" },
-        { tag: "div", styles: STYLES_KEY, children: ["O"], data: "O" },
-        { tag: "div", styles: STYLES_KEY, children: ["P"], data: "P" },
+const elements = { children: [
+    { children: [
+        { styles: STYLES_KEY, children: ["Q"], data: "Q" },
+        { styles: STYLES_KEY, children: ["W"], data: "W" },
+        { styles: STYLES_KEY, children: ["E"], data: "E" },
+        { styles: STYLES_KEY, children: ["R"], data: "R" },
+        { styles: STYLES_KEY, children: ["T"], data: "T" },
+        { styles: STYLES_KEY, children: ["Y"], data: "Y" },
+        { styles: STYLES_KEY, children: ["U"], data: "U" },
+        { styles: STYLES_KEY, children: ["I"], data: "I" },
+        { styles: STYLES_KEY, children: ["O"], data: "O" },
+        { styles: STYLES_KEY, children: ["P"], data: "P" },
     ] },
-    { tag: "div", styles: [], children: [
-        { tag: "div", styles: STYLES_KEY, children: ["A"], data: "A" },
-        { tag: "div", styles: STYLES_KEY, children: ["S"], data: "S" },
-        { tag: "div", styles: STYLES_KEY, children: ["D"], data: "D" },
-        { tag: "div", styles: STYLES_KEY, children: ["F"], data: "F" },
-        { tag: "div", styles: STYLES_KEY, children: ["G"], data: "G" },
-        { tag: "div", styles: STYLES_KEY, children: ["H"], data: "H" },
-        { tag: "div", styles: STYLES_KEY, children: ["J"], data: "J" },
-        { tag: "div", styles: STYLES_KEY, children: ["K"], data: "K" },
-        { tag: "div", styles: STYLES_KEY, children: ["L"], data: "L" },
+    { children: [
+        { styles: STYLES_KEY, children: ["A"], data: "A" },
+        { styles: STYLES_KEY, children: ["S"], data: "S" },
+        { styles: STYLES_KEY, children: ["D"], data: "D" },
+        { styles: STYLES_KEY, children: ["F"], data: "F" },
+        { styles: STYLES_KEY, children: ["G"], data: "G" },
+        { styles: STYLES_KEY, children: ["H"], data: "H" },
+        { styles: STYLES_KEY, children: ["J"], data: "J" },
+        { styles: STYLES_KEY, children: ["K"], data: "K" },
+        { styles: STYLES_KEY, children: ["L"], data: "L" },
     ] },
-    { tag: "div", styles: [], children: [
-        { tag: "div", styles: STYLES_KEY, children: ["Z"], data: "Z" },
-        { tag: "div", styles: STYLES_KEY, children: ["X"], data: "X" },
-        { tag: "div", styles: STYLES_KEY, children: ["C"], data: "C" },
-        { tag: "div", styles: STYLES_KEY, children: ["V"], data: "V" },
-        { tag: "div", styles: STYLES_KEY, children: ["B"], data: "B" },
-        { tag: "div", styles: STYLES_KEY, children: ["N"], data: "N" },
-        { tag: "div", styles: STYLES_KEY, children: ["M"], data: "M" },
-        { tag: "div", styles: STYLES_KEY, children: ["\u232b"], data: "BACKSPACE" },
+    { children: [
+        { styles: STYLES_KEY, children: ["Z"], data: "Z" },
+        { styles: STYLES_KEY, children: ["X"], data: "X" },
+        { styles: STYLES_KEY, children: ["C"], data: "C" },
+        { styles: STYLES_KEY, children: ["V"], data: "V" },
+        { styles: STYLES_KEY, children: ["B"], data: "B" },
+        { styles: STYLES_KEY, children: ["N"], data: "N" },
+        { styles: STYLES_KEY, children: ["M"], data: "M" },
+        { styles: STYLES_KEY, children: ["\u232b"], data: "BACKSPACE" },
     ] },
-    { tag: "div", styles: [], children: [
-        { tag: "div", styles: STYLES_KEY, children: ["Submit"], data: "ENTER" },
+    { children: [
+        { styles: STYLES_KEY, children: ["Submit"], data: "ENTER" },
     ] },
 ] };
 

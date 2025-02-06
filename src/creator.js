@@ -1,27 +1,27 @@
 import { createHTML } from "./createHTML.js";
 import * as puzzle from "./puzzle.js";
 
-const elements = { tag: "div", styles: ["wrapper"], children: [
-    { tag: "div", styles: [], children: [] },
-    { tag: "div", styles: [], children: [
+const elements = { styles: ["wrapper"], children: [
+    { },
+    { children: [
         "CLUE",
-        { tag: "input", styles: ["border"], children: [] },
+        { tag: "input", styles: ["border"] },
     ] },
-    { tag: "div", styles: [], children: [
+    { children: [
         "SOLUTION",
-        { tag: "input", styles: ["border"], children: [] },
+        { tag: "input", styles: ["border"] },
     ] },
-    { tag: "div", styles: [], children: [
+    { children: [
         "REVEALED LETTERS",
-        { tag: "input", styles: ["border"], children: [] },
+        { tag: "input", styles: ["border"] },
     ] },
-    { tag: "div", styles: [], children: [
-        { tag: "div", styles: ["border", "tile", "button"], children: ["Share"] },
+    { children: [
+        { styles: ["border", "tile", "button"], children: ["Share"] },
     ] },
-    { tag: "div", styles: [], children: [
-        { tag: "div", styles: ["border", "tile", "button"], children: ["Play"] },
+    { children: [
+        { styles: ["border", "tile", "button"], children: ["Play"] },
     ] },
-    { tag: "div", styles: [], children: [] },
+    { },
 ] };
 
 const clue = elements.children[1].children[1];

@@ -5,12 +5,12 @@ export const paramNames = ["c", "s", "l"];
 const regexSpace = / +/;
 const regexTile = /^[A-Z]$/;
 
-const elements = { tag: "div", styles: ["wrapper"], children: [
-    { tag: "div", styles: [], children: [] },
-    { tag: "div", styles: [], children: [] },
-    { tag: "div", styles: [], children: [] },
-    { tag: "div", styles: [], children: [] },
-    { tag: "div", styles: [], children: [] },
+const elements = { styles: ["wrapper"], children: [
+    { },
+    { children: [] },
+    { children: [] },
+    { children: [] },
+    { },
 ] };
 
 const clueWrapper = elements.children[1];
@@ -56,12 +56,12 @@ export function initializeDisplay(wrapper) {
     for (const word of lines[1].value.split(regexSpace)) {
 
         // add a word to the solution
-        const wordWrapper = { tag: "div", styles: stylesWord, children: [] };
+        const wordWrapper = { styles: stylesWord, children: [] };
 
         // add a tile or raw character to the word
         for (const character of word) {
             if (character.match(regexTile))
-                wordWrapper.children.push({ tag: "div", styles: stylesTile, children: [], data: character });
+                wordWrapper.children.push({ styles: stylesTile, data: character });
             else
                 wordWrapper.children.push(character);
         }
@@ -71,7 +71,7 @@ export function initializeDisplay(wrapper) {
 
     // add the reveal indicators
     for (let i = 0; i < maxReveals; i++)
-        indicatorsWrapper.children.push({ tag: "div", styles: stylesIndicator, children: [] });
+        indicatorsWrapper.children.push({ styles: stylesIndicator });
 
     createHTML(elements, wrapper);
 }
@@ -203,10 +203,10 @@ function isComplete() {
 function displayMessage(correct) {
     const score = getScore(correct);
 
-    const messageElements = { tag: "div", styles: ["message"], children: [
-        { tag: "div", styles: [], children: [lines[1].value] },
-        { tag: "div", styles: [], children: [score] },
-        { tag: "div", styles: ["border", "tile", "button"], children: ["Share"] },
+    const messageElements = { styles: ["message"], children: [
+        { children: [lines[1].value] },
+        { children: [score] },
+        { styles: ["border", "tile", "button"], children: ["Share"] },
     ] };
 
     createHTML(messageElements, elements.ref.parentElement);
