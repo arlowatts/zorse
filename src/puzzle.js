@@ -1,3 +1,5 @@
+import * as keyboard from "./keyboard.js";
+
 export const paramNames = ["c", "s", "l"];
 
 const regexSpace = / +/;
@@ -39,7 +41,6 @@ let revealedLetters = [];
 let reveals = 0;
 let maxReveals = 5;
 
-let targets = [];
 let submitted = false;
 
 export function loadPuzzle(clue, solution, letters) {
@@ -106,8 +107,7 @@ function revealLetter(letter, updateCounter = true) {
             reveals++;
         }
 
-        for (let i = 0; i < targets.length; i++)
-            targets[i].lockKey(letter);
+        keyboard.lockKey(letter);
 
         for (const wordWrapper of solutionWrapper.children) {
             for (const tile of wordWrapper.children) {
@@ -125,11 +125,9 @@ function revealLetter(letter, updateCounter = true) {
     }
 
     if (isComplete())
-        for (let i = 0; i < targets.length; i++)
-            targets[i].unlockKey("ENTER");
+        keyboard.unlockKey("ENTER");
     else
-        for (let i = 0; i < targets.length; i++)
-            targets[i].lockKey("ENTER");
+        keyboard.lockKey("ENTER");
 }
 
 export function addLetter(letter) {
@@ -140,8 +138,7 @@ export function addLetter(letter) {
                     tile.ref.textContent = letter;
 
                     if (isComplete())
-                        for (let i = 0; i < targets.length; i++)
-                            targets[i].unlockKey("ENTER");
+                        keyboard.unlockKey("ENTER");
 
                     return;
                 }
@@ -157,8 +154,7 @@ export function removeLetter() {
                 tile.ref.textContent = "";
 
                 if (!isComplete())
-                    for (let i = 0; i < targets.length; i++)
-                        targets[i].lockKey("ENTER");
+                    keyboard.lockKey("ENTER");
 
                 return;
             }
@@ -187,10 +183,7 @@ export function submit() {
             }
         }
 
-        for (let i = 0; i < targets.length; i++)
-            targets[i].clearDisplay();
-
-        targets = [];
+        keyboard.hide();
 
         scoreWrapper.ref.textContent = getScore(correct);
 
@@ -224,15 +217,6 @@ function getScore(correct) {
         score += String.fromCodePoint(shrugEmoji);
 
     return score;
-}
-
-export function addTarget(target) {
-    targets.push(target);
-    target.lockKey("ENTER");
-}
-
-function getLines() {
-    return lines;
 }
 
 export function shareURL() {

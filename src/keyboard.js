@@ -1,3 +1,5 @@
+import * as puzzle from "./puzzle.js";
+
 const STYLES_KEY = ["border", "tile", "key"];
 
 export const elements = { children: [
@@ -42,10 +44,8 @@ export const elements = { children: [
 const backspaceWrapper = elements.children[2].children[7];
 const enterWrapper = elements.children[3].children[0];
 
-const targets = [];
-
-export function clearDisplay() {
-    elements.ref.remove();
+export function hide() {
+    elements.ref.classList.add("hidden");
 }
 
 export function lockKey(key) {
@@ -85,19 +85,13 @@ export function initializeEventListeners() {
     }
 }
 
-export function addTarget(target) {
-    targets.push(target);
-}
-
 function handleKeyDown(keyWrapper) {
-    for (const target of targets) {
-        if (keyWrapper === enterWrapper) {
-            target.submit();
-            document.activeElement.blur();
-        }
-        else if (keyWrapper === backspaceWrapper)
-            target.removeLetter();
-        else
-            target.addLetter(keyWrapper.data);
+    if (keyWrapper === enterWrapper) {
+        puzzle.submit();
+        document.activeElement.blur();
     }
+    else if (keyWrapper === backspaceWrapper)
+        puzzle.removeLetter();
+    else
+        puzzle.addLetter(keyWrapper.data);
 }

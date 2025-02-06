@@ -29,9 +29,6 @@ function main() {
         createHTML(puzzle.elements, document.body);
         createHTML(keyboard.elements, document.body);
 
-        puzzle.addTarget(keyboard);
-        keyboard.addTarget(puzzle);
-
         puzzle.initializeEventListeners();
         keyboard.initializeEventListeners();
     }
