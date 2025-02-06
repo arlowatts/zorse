@@ -15,15 +15,15 @@ function main() {
 
     puzzle.decode(encodedPuzzle);
 
-    const shareButton = document.getElementById("share-button");
-
-    shareButton.addEventListener("click", puzzle.shareURL);
-
     if (!encodedPuzzle[1]) {
         createHTML(creator.elements, document.body);
         creator.initializeEventListeners();
     }
     else {
+        const shareButton = document.getElementById("share-button");
+        shareButton.addEventListener("click", puzzle.shareURL);
+        shareButton.classList.remove("hidden");
+
         createHTML(puzzle.elements, document.body);
         createHTML(keyboard.elements, document.body);
 
