@@ -65,7 +65,7 @@ input {
     font-size: inherit;
     text-transform: uppercase;
 
-    width: 95%;
+    width: calc(100% - 1em);
     padding: 0.5em;
 }
 
