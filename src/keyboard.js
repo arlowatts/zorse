@@ -1,67 +1,96 @@
-import { tileDisplay } from "./createHTML.js";
+import { createHTML } from "./createHTML.js";
 
-const layout = [
-    [["Q"], ["W"], ["E"], ["R"], ["T"], ["Y"], ["U"], ["I"], ["O"], ["P"]],
-    [["A"], ["S"], ["D"], ["F"], ["G"], ["H"], ["J"], ["K"], ["L"]],
-    [["Z"], ["X"], ["C"], ["V"], ["B"], ["N"], ["M"], ["\u232b"]],
-    [["Submit"]],
-];
+const STYLES_KEY = ["border", "tile", "key"];
 
-const layoutFlat = [
-    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
-    "A", "S", "D", "F", "G", "H", "J", "K", "L",
-    "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE",
-    "ENTER",
-];
+const elements = { tag: "div", styles: [], children: [
+    { tag: "div", styles: [], children: [
+        { tag: "div", styles: STYLES_KEY, children: ["Q"], data: "Q" },
+        { tag: "div", styles: STYLES_KEY, children: ["W"], data: "W" },
+        { tag: "div", styles: STYLES_KEY, children: ["E"], data: "E" },
+        { tag: "div", styles: STYLES_KEY, children: ["R"], data: "R" },
+        { tag: "div", styles: STYLES_KEY, children: ["T"], data: "T" },
+        { tag: "div", styles: STYLES_KEY, children: ["Y"], data: "Y" },
+        { tag: "div", styles: STYLES_KEY, children: ["U"], data: "U" },
+        { tag: "div", styles: STYLES_KEY, children: ["I"], data: "I" },
+        { tag: "div", styles: STYLES_KEY, children: ["O"], data: "O" },
+        { tag: "div", styles: STYLES_KEY, children: ["P"], data: "P" },
+    ] },
+    { tag: "div", styles: [], children: [
+        { tag: "div", styles: STYLES_KEY, children: ["A"], data: "A" },
+        { tag: "div", styles: STYLES_KEY, children: ["S"], data: "S" },
+        { tag: "div", styles: STYLES_KEY, children: ["D"], data: "D" },
+        { tag: "div", styles: STYLES_KEY, children: ["F"], data: "F" },
+        { tag: "div", styles: STYLES_KEY, children: ["G"], data: "G" },
+        { tag: "div", styles: STYLES_KEY, children: ["H"], data: "H" },
+        { tag: "div", styles: STYLES_KEY, children: ["J"], data: "J" },
+        { tag: "div", styles: STYLES_KEY, children: ["K"], data: "K" },
+        { tag: "div", styles: STYLES_KEY, children: ["L"], data: "L" },
+    ] },
+    { tag: "div", styles: [], children: [
+        { tag: "div", styles: STYLES_KEY, children: ["Z"], data: "Z" },
+        { tag: "div", styles: STYLES_KEY, children: ["X"], data: "X" },
+        { tag: "div", styles: STYLES_KEY, children: ["C"], data: "C" },
+        { tag: "div", styles: STYLES_KEY, children: ["V"], data: "V" },
+        { tag: "div", styles: STYLES_KEY, children: ["B"], data: "B" },
+        { tag: "div", styles: STYLES_KEY, children: ["N"], data: "N" },
+        { tag: "div", styles: STYLES_KEY, children: ["M"], data: "M" },
+        { tag: "div", styles: STYLES_KEY, children: ["\u232b"], data: "BACKSPACE" },
+    ] },
+    { tag: "div", styles: [], children: [
+        { tag: "div", styles: STYLES_KEY, children: ["Submit"], data: "ENTER" },
+    ] },
+] };
 
-const cssClasses = [[], [], ["border", "tile", "key"]];
+const backspaceWrapper = elements.children[2].children[7];
+const enterWrapper = elements.children[3].children[0];
 
 const targets = [];
 
-const refs = [[], [], []];
-
 export function initializeDisplay(wrapper) {
-    tileDisplay(layout, cssClasses, wrapper, refs);
+    createHTML(elements, wrapper);
 
-    refs[2][26].style.width = "20%";
-    refs[2][27].style.width = "100%";
+    backspaceWrapper.ref.style.width = "20%";
+    enterWrapper.ref.style.width = "100%";
 }
 
 export function clearDisplay() {
-    refs[0][0].remove();
-
-    for (let i = 0; i < refs.length; i++)
-        refs[i] = [];
+    elements.ref.remove();
 }
 
 export function lockKey(key) {
-    if (layoutFlat.includes(key)) {
-        const index = layoutFlat.indexOf(key);
-
-        refs[2][index].classList.add("locked");
-    }
+    for (const rowWrapper of elements.children)
+        for (const keyWrapper of rowWrapper.children)
+            if (keyWrapper.data === key)
+                keyWrapper.ref.classList.add("locked");
 }
 
 export function unlockKey(key) {
-    if (layoutFlat.includes(key)) {
-        const index = layoutFlat.indexOf(key);
-
-        refs[2][index].classList.remove("locked");
-    }
+    for (const rowWrapper of elements.children)
+        for (const keyWrapper of rowWrapper.children)
+            if (keyWrapper.data === key)
+                keyWrapper.ref.classList.remove("locked");
 }
 
 export function initializeEventListeners() {
-    addEventListener("keydown", (e) => { if (!e.ctrlKey) keyDown(e.key.toUpperCase()); });
+    addEventListener("keydown", (e) => {
+        if (!e.ctrlKey)
+            for (const rowWrapper of elements.children)
+                for (const keyWrapper of rowWrapper.children)
+                    if (keyWrapper.data === e.key.toUpperCase())
+                        handleKeyDown(keyWrapper);
+    });
 
-    for (let i = 0; i < layoutFlat.length; i++) {
-        refs[2][i].addEventListener("pointerdown", (e) => {
-            e.target.style["background-color"] = "lightgray";
-            keyDown(layoutFlat[i]);
-        });
+    for (const rowWrapper of elements.children) {
+        for (const keyWrapper of rowWrapper.children) {
+            keyWrapper.ref.addEventListener("pointerdown", () => {
+                keyWrapper.ref.classList.add("pressed");
+                handleKeyDown(keyWrapper);
+            });
 
-        refs[2][i].addEventListener("pointerup", (e) => {
-            e.target.style["background-color"] = "transparent";
-        });
+            keyWrapper.ref.addEventListener("pointerup", () => {
+                keyWrapper.ref.classList.remove("pressed");
+            });
+        }
     }
 }
 
@@ -69,19 +98,15 @@ export function addTarget(target) {
     targets.push(target);
 }
 
-function keyDown(key) {
-    if (layoutFlat.includes(key)) {
-        const index = layoutFlat.indexOf(key);
-
-        for (let i = 0; i < targets.length; i++) {
-            if (index === 27) {
-                targets[i].submit();
-                document.activeElement.blur();
-            }
-            else if (index === 26)
-                targets[i].removeLetter();
-            else
-                targets[i].addLetter(key);
+function handleKeyDown(keyWrapper) {
+    for (const target of targets) {
+        if (keyWrapper === enterWrapper) {
+            target.submit();
+            document.activeElement.blur();
         }
+        else if (keyWrapper === backspaceWrapper)
+            target.removeLetter();
+        else
+            target.addLetter(keyWrapper.data);
     }
 }

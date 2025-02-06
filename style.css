@@ -30,6 +30,10 @@
             width: 10%;
             height: 2.5em;
             line-height: 2.3em;
+
+            &.pressed {
+                background-color: lightgray;
+            }
         }
 
         &.button {
