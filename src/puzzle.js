@@ -46,6 +46,7 @@ let reveals = 0;
 let maxReveals = 5;
 
 let submitted = false;
+let correct = false;
 
 export function set(clue, solution, letters) {
     puzzle.clue = clue.toUpperCase();
@@ -162,7 +163,7 @@ export function removeLetter() {
 export function submit() {
     if (!submitted && isComplete()) {
         submitted = true;
-        let correct = true;
+        correct = true;
 
         for (const wordWrapper of solutionWrapper.children) {
             for (const tile of wordWrapper.children) {
@@ -182,7 +183,7 @@ export function submit() {
 
         keyboard.hide();
 
-        scoreWrapper.ref.textContent = getScore(correct);
+        scoreWrapper.ref.textContent = getScore();
 
         messageSolutionWrapper.ref.classList.remove("hidden");
         scoreWrapper.ref.classList.remove("hidden");
@@ -205,7 +206,7 @@ function isComplete() {
     return complete;
 }
 
-function getScore(correct) {
+function getScore() {
     let score = String.fromCodePoint(letterEmoji).repeat(reveals);
 
     if (correct)
