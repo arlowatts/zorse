@@ -5,7 +5,7 @@ export const paramNames = ["c", "s", "l"];
 const regexSpace = / +/;
 const regexTile = /^[A-Z]$/;
 
-const elements = { styles: ["wrapper"], children: [
+export const elements = { styles: ["wrapper"], children: [
     { },
     { children: [] },
     { children: [] },
@@ -72,12 +72,6 @@ export function loadPuzzle(clue, solution, letters) {
     // add the reveal indicators
     for (let i = 0; i < maxReveals; i++)
         indicatorsWrapper.children.push({ styles: stylesIndicator });
-}
-
-// create the HTML elements showing the puzzle
-export function initializeDisplay(wrapper) {
-
-    createHTML(elements, wrapper);
 }
 
 export function initializeEventListeners() {

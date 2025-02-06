@@ -1,8 +1,6 @@
-import { createHTML } from "./createHTML.js";
-
 const STYLES_KEY = ["border", "tile", "key"];
 
-const elements = { children: [
+export const elements = { children: [
     { children: [
         { styles: STYLES_KEY, children: ["Q"], data: "Q" },
         { styles: STYLES_KEY, children: ["W"], data: "W" },
@@ -45,10 +43,6 @@ const backspaceWrapper = elements.children[2].children[7];
 const enterWrapper = elements.children[3].children[0];
 
 const targets = [];
-
-export function initializeDisplay(wrapper) {
-    createHTML(elements, wrapper);
-}
 
 export function clearDisplay() {
     elements.ref.remove();

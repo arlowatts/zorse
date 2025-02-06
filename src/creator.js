@@ -1,7 +1,6 @@
-import { createHTML } from "./createHTML.js";
 import * as puzzle from "./puzzle.js";
 
-const elements = { styles: ["wrapper"], children: [
+export const elements = { styles: ["wrapper"], children: [
     { },
     { children: [
         "CLUE",
@@ -31,9 +30,7 @@ const letters = elements.children[3].children[1];
 const shareButton = elements.children[4].children[0];
 const playButton = elements.children[5].children[0];
 
-export function initializeDisplay(wrapper) {
-    createHTML(elements, wrapper);
-
+export function initializeEventListeners() {
     puzzle.loadPuzzle([clue.ref, solution.ref, letters.ref]);
 
     shareButton.ref.addEventListener("click", () => {

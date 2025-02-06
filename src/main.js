@@ -1,6 +1,7 @@
 import * as puzzle from "./puzzle.js";
 import * as keyboard from "./keyboard.js";
 import * as creator from "./creator.js";
+import { createHTML } from "./createHTML.js";
 
 addEventListener("load", main);
 
@@ -21,11 +22,12 @@ function main() {
     });
 
     if (!encodedPuzzle[1]) {
-        creator.initializeDisplay(document.body);
+        createHTML(creator.elements, document.body);
+        creator.initializeEventListeners();
     }
     else {
-        puzzle.initializeDisplay(document.body);
-        keyboard.initializeDisplay(document.body);
+        createHTML(puzzle.elements, document.body);
+        createHTML(keyboard.elements, document.body);
 
         puzzle.addTarget(keyboard);
         keyboard.addTarget(puzzle);
