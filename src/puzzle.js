@@ -1,5 +1,3 @@
-import { createHTML } from "./createHTML.js";
-
 export const paramNames = ["c", "s", "l"];
 
 const regexSpace = / +/;
@@ -7,15 +5,23 @@ const regexTile = /^[A-Z]$/;
 
 export const elements = { styles: ["wrapper"], children: [
     { },
-    { children: [] },
-    { children: [] },
-    { children: [] },
+    { },
+    { },
+    { },
+    { styles: ["hidden"] },
+    { styles: ["hidden"] },
+    { children: [
+        { styles: ["hidden", "border", "tile", "button"], children: ["Share"] },
+    ] },
     { },
 ] };
 
 const clueWrapper = elements.children[1];
 const solutionWrapper = elements.children[2];
 const indicatorsWrapper = elements.children[3];
+const messageSolutionWrapper = elements.children[4];
+const scoreWrapper = elements.children[5];
+const shareWrapper = elements.children[6].children[0];
 
 const stylesWord = ["word"];
 const stylesTile = ["border", "tile", "letter"];
@@ -49,6 +55,9 @@ export function loadPuzzle(clue, solution, letters) {
     clueWrapper.children = [];
     solutionWrapper.children = [];
     indicatorsWrapper.children = [];
+    messageSolutionWrapper.children = [];
+
+    messageSolutionWrapper.children.push(lines[1].value);
 
     // add the puzzle's clue as text
     clueWrapper.children.push(lines[0].value);
@@ -82,6 +91,10 @@ export function initializeEventListeners() {
 
     for (const letter of lines[2].value)
         revealLetter(letter, false);
+
+    shareWrapper.ref.addEventListener("click", () => {
+        navigator.share({ text: "\"" + lines[0].value + "\"\n" + score });
+    });
 }
 
 function revealLetter(letter, updateCounter = true) {
@@ -179,7 +192,11 @@ export function submit() {
 
         targets = [];
 
-        displayMessage(correct);
+        scoreWrapper.ref.textContent = getScore(correct);
+
+        messageSolutionWrapper.ref.classList.remove("hidden");
+        scoreWrapper.ref.classList.remove("hidden");
+        shareWrapper.ref.classList.remove("hidden");
     }
 }
 
@@ -196,22 +213,6 @@ function isComplete() {
     }
 
     return complete;
-}
-
-function displayMessage(correct) {
-    const score = getScore(correct);
-
-    const messageElements = { styles: ["message"], children: [
-        { children: [lines[1].value] },
-        { children: [score] },
-        { styles: ["border", "tile", "button"], children: ["Share"] },
-    ] };
-
-    createHTML(messageElements, elements.ref.parentElement);
-
-    messageElements.children[2].ref.addEventListener("click", (e) => {
-        navigator.share({ text: "\"" + lines[0].value + "\"\n" + score });
-    });
 }
 
 function getScore(correct) {
