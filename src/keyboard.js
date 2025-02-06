@@ -34,10 +34,10 @@ const elements = { children: [
         { styles: STYLES_KEY, children: ["B"], data: "B" },
         { styles: STYLES_KEY, children: ["N"], data: "N" },
         { styles: STYLES_KEY, children: ["M"], data: "M" },
-        { styles: STYLES_KEY, children: ["\u232b"], data: "BACKSPACE" },
+        { styles: STYLES_KEY.concat("large"), children: ["\u232b"], data: "BACKSPACE" },
     ] },
     { children: [
-        { styles: STYLES_KEY, children: ["Submit"], data: "ENTER" },
+        { styles: STYLES_KEY.concat("x-large"), children: ["Submit"], data: "ENTER" },
     ] },
 ] };
 
@@ -48,9 +48,6 @@ const targets = [];
 
 export function initializeDisplay(wrapper) {
     createHTML(elements, wrapper);
-
-    backspaceWrapper.ref.style.width = "20%";
-    enterWrapper.ref.style.width = "100%";
 }
 
 export function clearDisplay() {
