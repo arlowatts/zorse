@@ -37,7 +37,7 @@ export const elements = { children: [
         { styles: STYLES_KEY.concat("large"), children: ["\u232b"], data: "BACKSPACE" },
     ] },
     { children: [
-        { styles: STYLES_KEY.concat("x-large"), children: ["Submit"], data: "ENTER" },
+        { styles: STYLES_KEY.concat("x-large", "locked"), children: ["Submit"], data: "ENTER" },
     ] },
 ] };
 
