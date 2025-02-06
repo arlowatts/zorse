@@ -27,6 +27,7 @@ export const elements = { children: [
         { styles: STYLES_KEY, children: ["L"], data: "L" },
     ] },
     { children: [
+        { styles: STYLES_KEY.concat("large", "blank") },
         { styles: STYLES_KEY, children: ["Z"], data: "Z" },
         { styles: STYLES_KEY, children: ["X"], data: "X" },
         { styles: STYLES_KEY, children: ["C"], data: "C" },
@@ -41,7 +42,7 @@ export const elements = { children: [
     ] },
 ] };
 
-const backspaceWrapper = elements.children[2].children[7];
+const backspaceWrapper = elements.children[2].children[8];
 const enterWrapper = elements.children[3].children[0];
 
 export function hide() {
