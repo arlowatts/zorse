@@ -1,5 +1,5 @@
 import * as puzzle from "./puzzle.js";
-import { Keyboard } from "./keyboard.js";
+import * as keyboard from "./keyboard.js";
 import { Creator } from "./creator.js";
 
 addEventListener("load", main);
@@ -24,8 +24,6 @@ function main() {
         const creator = new Creator(document.body);
     }
     else {
-        const keyboard = new Keyboard();
-
         puzzle.initializeDisplay(document.body);
         keyboard.initializeDisplay(document.body);
 
