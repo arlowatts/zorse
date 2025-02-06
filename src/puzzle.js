@@ -92,9 +92,7 @@ export function initializeEventListeners() {
     for (const letter of puzzle.letters)
         revealLetter(letter, false);
 
-    shareWrapper.ref.addEventListener("click", () => {
-        navigator.share({ text: "\"" + puzzle.clue + "\"\n" + getScore() });
-    });
+    shareWrapper.ref.addEventListener("click", shareScore);
 }
 
 function revealLetter(letter, updateCounter = true) {
@@ -218,8 +216,12 @@ function getScore(correct) {
     return score;
 }
 
+function shareScore() {
+    navigator.share({ text: "\"" + puzzle.clue + "\"\n" + getScore() });
+}
+
 export function shareURL() {
-    return "\"" + puzzle.clue.toUpperCase() + "\"\n" + getURL();
+    navigator.share({ text: "\"" + puzzle.clue + "\"\n" + getURL() });
 }
 
 export function getURL() {

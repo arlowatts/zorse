@@ -6,7 +6,7 @@ import { createHTML } from "./createHTML.js";
 addEventListener("load", main);
 
 function main() {
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams = new URLSearchParams(location.search);
 
     const encodedPuzzle = [];
 
@@ -17,9 +17,7 @@ function main() {
 
     const shareButton = document.getElementById("share-button");
 
-    shareButton.addEventListener("click", () => {
-        navigator.share({ text: puzzle.shareURL() });
-    });
+    shareButton.addEventListener("click", puzzle.shareURL);
 
     if (!encodedPuzzle[1]) {
         createHTML(creator.elements, document.body);

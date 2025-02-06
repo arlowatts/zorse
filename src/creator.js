@@ -21,22 +21,25 @@ const wrappers = {
 export function initializeEventListeners() {
 
     // share the puzzle URL when the share button is clicked
-    wrappers.share.ref.addEventListener("click", () => {
-        puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
-        navigator.share({ text: puzzle.shareURL() });
-    });
+    wrappers.share.ref.addEventListener("click", share);
 
     // navigate to the puzzle page when the play button is clicked
-    wrappers.play.ref.addEventListener("click", () => {
-        puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
-        location = puzzle.getURL();
-    });
+    wrappers.play.ref.addEventListener("click", play);
 
     // navigate to the puzzle page when the enter key is pressed
-    addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
-            location = puzzle.getURL();
-        }
-    });
+    addEventListener("keydown", (e) => { if (e.key === "Enter") play(); });
+}
+
+function share() {
+    setPuzzle();
+    puzzle.shareURL();
+}
+
+function play() {
+    setPuzzle();
+    location = puzzle.getURL();
+}
+
+function setPuzzle() {
+    puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
 }
