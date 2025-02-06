@@ -45,10 +45,10 @@ export function loadPuzzle(clue, solution, letters) {
         lines[1] = {value: solution.toUpperCase()};
         lines[2] = {value: letters.toUpperCase()};
     }
-}
 
-// create the HTML elements showing the puzzle
-export function initializeDisplay(wrapper) {
+    clueWrapper.children = [];
+    solutionWrapper.children = [];
+    indicatorsWrapper.children = [];
 
     // add the puzzle's clue as text
     clueWrapper.children.push(lines[0].value);
@@ -72,6 +72,10 @@ export function initializeDisplay(wrapper) {
     // add the reveal indicators
     for (let i = 0; i < maxReveals; i++)
         indicatorsWrapper.children.push({ styles: stylesIndicator });
+}
+
+// create the HTML elements showing the puzzle
+export function initializeDisplay(wrapper) {
 
     createHTML(elements, wrapper);
 }
