@@ -240,33 +240,43 @@ export function getURL() {
 export function encode() {
     const encoder = new TextEncoder();
 
-    // encode the parts of the puzzle as arrays of bytes
-    const clueBytes     = encoder.encode(puzzle.clue.toUpperCase());
-    const solutionBytes = encoder.encode(puzzle.solution.toUpperCase());
-    const lettersBytes  = encoder.encode(puzzle.letters.toUpperCase());
+    return [puzzle.clue, puzzle.solution, puzzle.letters].map((s) => {
+        // encode the string as an array of bytes
+        s = encoder.encode(s);
 
-    // encode the arrays of bytes as base64 strings
-    return [
-        btoa(String.fromCharCode.apply(null, clueBytes)),
-        btoa(String.fromCharCode.apply(null, solutionBytes)),
-        btoa(String.fromCharCode.apply(null, lettersBytes)),
-    ];
+        // encode the array of bytes as a base64 string
+        s = String.fromCharCode.apply(null, s);
+        s = btoa(s);
+
+        // make the base64 string url-safe
+        s = s.replaceAll("+", "-");
+        s = s.replaceAll("/", "_");
+        s = s.replaceAll("=", "");
+
+        return s;
+    });
 }
 
 // decode a puzzle from three base64 strings
 export function decode(encodedPuzzle) {
     const decoder = new TextDecoder();
 
-    // decode the base64 strings as arrays of bytes
-    const clueBytes     = new Uint8Array(Array.from(atob(encodedPuzzle[0])).map((x) => x.charCodeAt()));
-    const solutionBytes = new Uint8Array(Array.from(atob(encodedPuzzle[1])).map((x) => x.charCodeAt()));
-    const lettersBytes  = new Uint8Array(Array.from(atob(encodedPuzzle[2])).map((x) => x.charCodeAt()));
+    const decodedPuzzle = encodedPuzzle.map((s) => {
+        // restore the original form of the base64 string
+        s = s.replaceAll("_", "/");
+        s = s.replaceAll("-", "+");
 
-    // decode the arrays of bytes as parts of the puzzle
-    const clue     = decoder.decode(clueBytes).toUpperCase();
-    const solution = decoder.decode(solutionBytes).toUpperCase();
-    const letters  = decoder.decode(lettersBytes).toUpperCase();
+        // decode the base64 string as an array of bytes
+        s = atob(s);
+        s = Array.from(s, (t) => t.charCodeAt());
+        s = new Uint8Array(s);
+
+        // decode the array of bytes as a string
+        s = decoder.decode(s);
+
+        return s;
+    });
 
     // load the puzzle
-    set(clue, solution, letters);
+    set(...decodedPuzzle);
 }
