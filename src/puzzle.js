@@ -52,8 +52,6 @@ export function set(clue, solution, letters) {
     puzzle.clue = clue.trim().normalize().toWellFormed().replaceAll(/\s+/g, " ").toUpperCase();
     puzzle.solution = solution.trim().normalize().toWellFormed().replaceAll(/\s+/g, " ").toUpperCase();
     puzzle.letters = Array.from(new Set(letters.toUpperCase())).filter((letter) => letter.match(regexTile)).sort().join("");
-    console.log('"' + puzzle.clue + '"');
-    console.log('"' + puzzle.solution + '"');
 
     clueWrapper.children = [];
     solutionWrapper.children = [];
