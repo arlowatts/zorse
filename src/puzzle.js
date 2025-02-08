@@ -51,7 +51,7 @@ let correct = false;
 export function set(clue, solution, letters) {
     puzzle.clue = clue.toUpperCase();
     puzzle.solution = solution.toUpperCase();
-    puzzle.letters = letters.toUpperCase();
+    puzzle.letters = Array.from(new Set(letters.toUpperCase())).filter((letter) => letter.match(regexTile)).sort().join("");
 
     clueWrapper.children = [];
     solutionWrapper.children = [];
