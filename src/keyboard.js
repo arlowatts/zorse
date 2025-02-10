@@ -2,97 +2,95 @@ import * as puzzle from "./puzzle.js";
 
 const STYLES_KEY = ["border", "tile", "key"];
 
-export const elements = { children: [
-    { children: [
-        { styles: STYLES_KEY, children: ["Q"], data: "Q" },
-        { styles: STYLES_KEY, children: ["W"], data: "W" },
-        { styles: STYLES_KEY, children: ["E"], data: "E" },
-        { styles: STYLES_KEY, children: ["R"], data: "R" },
-        { styles: STYLES_KEY, children: ["T"], data: "T" },
-        { styles: STYLES_KEY, children: ["Y"], data: "Y" },
-        { styles: STYLES_KEY, children: ["U"], data: "U" },
-        { styles: STYLES_KEY, children: ["I"], data: "I" },
-        { styles: STYLES_KEY, children: ["O"], data: "O" },
-        { styles: STYLES_KEY, children: ["P"], data: "P" },
+// array of HTML elements to create on the page
+export const elements = [
+    { styles: ["hidden"], children: [
+        { children: getKeyboardRow("QWERTYUIOP") },
+        { children: getKeyboardRow("ASDFGHJKL") },
+        { children: [
+            { styles: ["large", "blank", ...STYLES_KEY] },
+            ...getKeyboardRow("ZXCVBNM"),
+            getKeyboardKey("\u232b", "BACKSPACE", ["large"]),
+        ] },
+        { children: [
+            getKeyboardKey("Submit", "ENTER", ["x-large", "locked"]),
+        ] },
     ] },
-    { children: [
-        { styles: STYLES_KEY, children: ["A"], data: "A" },
-        { styles: STYLES_KEY, children: ["S"], data: "S" },
-        { styles: STYLES_KEY, children: ["D"], data: "D" },
-        { styles: STYLES_KEY, children: ["F"], data: "F" },
-        { styles: STYLES_KEY, children: ["G"], data: "G" },
-        { styles: STYLES_KEY, children: ["H"], data: "H" },
-        { styles: STYLES_KEY, children: ["J"], data: "J" },
-        { styles: STYLES_KEY, children: ["K"], data: "K" },
-        { styles: STYLES_KEY, children: ["L"], data: "L" },
-    ] },
-    { children: [
-        { styles: STYLES_KEY.concat("large", "blank") },
-        { styles: STYLES_KEY, children: ["Z"], data: "Z" },
-        { styles: STYLES_KEY, children: ["X"], data: "X" },
-        { styles: STYLES_KEY, children: ["C"], data: "C" },
-        { styles: STYLES_KEY, children: ["V"], data: "V" },
-        { styles: STYLES_KEY, children: ["B"], data: "B" },
-        { styles: STYLES_KEY, children: ["N"], data: "N" },
-        { styles: STYLES_KEY, children: ["M"], data: "M" },
-        { styles: STYLES_KEY.concat("large"), children: ["\u232b"], data: "BACKSPACE" },
-    ] },
-    { children: [
-        { styles: STYLES_KEY.concat("x-large", "locked"), children: ["Submit"], data: "ENTER" },
-    ] },
-] };
+];
 
-const backspaceWrapper = elements.children[2].children[8];
-const enterWrapper = elements.children[3].children[0];
+// dictionary of commonly used wrappers
+const wrappers = {
+    main: elements[0],
+    backspace: elements[0].children[2].children[8],
+    enter: elements[0].children[3].children[0],
+};
 
+// initialize event listeners on the HTML elements
+export function init() {
+
+    // detect key presses on the physical keyboard
+    addEventListener("keydown", handleKeyDown);
+
+    // show the HTML elements
+    wrappers.main.ref.classList.remove("hidden");
+}
+
+// hide the HTML elements
 export function hide() {
-    elements.ref.classList.add("hidden");
+    wrappers.main.ref.classList.add("hidden");
 }
 
+// access a key by its string
+export function getKey(character) {
+    for (const row of wrappers.main.children)
+        for (const key of row.children)
+            if (key.data === character)
+                return key;
+}
+
+// change the text color of a key to gray
 export function lockKey(key) {
-    for (const rowWrapper of elements.children)
-        for (const keyWrapper of rowWrapper.children)
-            if (keyWrapper.data === key)
-                keyWrapper.ref.classList.add("locked");
+    key.ref.classList.add("locked");
 }
 
+// restore the text color of a key
 export function unlockKey(key) {
-    for (const rowWrapper of elements.children)
-        for (const keyWrapper of rowWrapper.children)
-            if (keyWrapper.data === key)
-                keyWrapper.ref.classList.remove("locked");
+    key.ref.classList.remove("locked");
 }
 
-export function initializeEventListeners() {
-    addEventListener("keydown", (e) => {
-        if (!e.ctrlKey)
-            for (const rowWrapper of elements.children)
-                for (const keyWrapper of rowWrapper.children)
-                    if (keyWrapper.data === e.key.toUpperCase())
-                        handleKeyDown(keyWrapper);
-    });
-
-    for (const rowWrapper of elements.children) {
-        for (const keyWrapper of rowWrapper.children) {
-            keyWrapper.ref.addEventListener("pointerdown", () => {
-                keyWrapper.ref.classList.add("pressed");
-                handleKeyDown(keyWrapper);
-            });
-
-            keyWrapper.ref.addEventListener("pointerup", () => {
-                keyWrapper.ref.classList.remove("pressed");
-            });
-        }
-    }
+// generate a row of keyboard keys from an iterable
+function getKeyboardRow(characters) {
+    return Array.from(characters, (character) => getKeyboardKey(character, character.toUpperCase()));
 }
 
-function handleKeyDown(keyWrapper) {
-    if (keyWrapper === enterWrapper) {
-        puzzle.submit();
-        document.activeElement.blur();
+// generate a single keyboard key
+function getKeyboardKey(display, data, styles = []) {
+    return {
+        styles: STYLES_KEY.concat(styles),
+        children: [display],
+        data: data,
+        listeners: {
+            pointerdown: (e) => {
+                e.target.classList.add("pressed");
+                handleKeyDown({ key: data });
+            },
+            pointerup: (e) => {
+                e.target.classList.remove("pressed");
+            },
+        },
+    };
+}
+
+// respond to keydown events and key presses on the virtual keyboard
+function handleKeyDown(e) {
+    if (!e.ctrlKey) {
+        const key = e.key.toUpperCase();
+
+        if (key === wrappers.enter.data)
+            puzzle.submit();
+        else if (key === wrappers.backspace.data)
+            puzzle.removeLetter();
+        else
+            puzzle.addLetter(key);
     }
-    else if (keyWrapper === backspaceWrapper)
-        puzzle.removeLetter();
-    else
-        puzzle.addLetter(keyWrapper.data);
 }

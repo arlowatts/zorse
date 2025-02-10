@@ -1,71 +1,112 @@
-.wrapper {
+html {
+    height: 100%;
+}
+
+body {
+    font: bold 60px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 
     height: 100%;
     margin: 0;
 
-    text-align: center;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-.border {
-    border: 0.1em solid lightgray;
-    border-radius: 0.25em;
-    box-sizing: border-box;
+header .link {
+    font-size: 40px;
+    color: lightgray;
+    text-decoration: underline;
 
-    &.tile {
+    display: inline-block;
+    margin: 0.25em 1em;
+    cursor: pointer;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+
+    flex-grow: 1;
+
+    input {
+        font-size: inherit;
+        text-transform: uppercase;
+
+        width: calc(100% - 1em);
+        padding: 0.5em;
+    }
+
+    .word {
         display: inline-block;
-        vertical-align: top;
-        cursor: pointer;
+        margin: 0.05em 0.65em;
+    }
 
-        &.letter {
-            width: 1.2em;
-            height: 1.5em;
-            line-height: 1.3em;
-            margin: 0 0.05em;
-        }
-
-        &.key {
-            width: 10%;
-            height: 2.5em;
-            line-height: 2.3em;
-
-            &.pressed {
-                background-color: lightgray;
-            }
-
-            &.large {
-                width: 15%;
-            }
-
-            &.x-large {
-                width: 100%;
-            }
-        }
+    .border {
+        border: 0.1em solid lightgray;
+        border-radius: 0.25em;
+        box-sizing: border-box;
 
         &.button {
+            cursor: pointer;
             width: 50%;
+            margin: 0 25%;
         }
-    }
 
-    &.indicator {
-        display: inline-block;
+        &.indicator {
+            display: inline-block;
 
-        width: 0.5em;
-        height: 0.5em;
-        margin: 0 0.25em;
-    }
+            width: 0.5em;
+            height: 0.5em;
+            margin: 0 0.25em;
+        }
 
-    &.locked {
-        color: lightgray;
-        cursor: default;
-    }
+        &.tile {
+            display: inline-block;
+            vertical-align: top;
+            cursor: pointer;
 
-    &.filled {
-        border-color: darkseagreen;
-        background-color: darkseagreen;
-        cursor: default;
+            &.letter {
+                width: 1.2em;
+                height: 1.5em;
+                line-height: 1.3em;
+                margin: 0 0.05em;
+            }
+
+            &.key {
+                width: 10%;
+                height: 2.5em;
+                line-height: 2.3em;
+
+                &.pressed {
+                    background-color: lightgray;
+                }
+
+                &.large {
+                    width: 15%;
+                }
+
+                &.x-large {
+                    width: 100%;
+                }
+            }
+        }
+
+        &.locked {
+            color: lightgray;
+            cursor: default;
+        }
+
+        &.filled {
+            border-color: darkseagreen;
+            background-color: darkseagreen;
+            cursor: default;
+        }
     }
 }
 
@@ -75,50 +116,4 @@
 
 .hidden {
     display: none !important;
-}
-
-input {
-    font-size: inherit;
-    text-transform: uppercase;
-
-    width: calc(100% - 1em);
-    padding: 0.5em;
-}
-
-
-
-html {
-    height: 100%;
-}
-
-body {
-    font: bold 60px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
-    touch-action: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-header {
-    font-size: 40px;
-    color: lightgray;
-    text-align: left;
-
-    .link {
-        display: inline-block;
-        margin: 0.25em 1em;
-    }
-}
-
-header a {
-    color: inherit;
-}
-
-div.message {
-    height: 10em;
-}
-
-div.word {
-    display: inline-block;
-    margin: 0.05em 0.65em;
 }

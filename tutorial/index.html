@@ -4,16 +4,18 @@
         <title>How to play | Zorse</title>
         <link rel="stylesheet" href="../style.css">
     </head>
-    <body class="wrapper">
-        <div></div>
-        <p>HOW TO PLAY ZORSE</p>
-        <p>Tap on a tile to reveal it. You can reveal up to five tiles. The fewer reveals you use, the better!</p>
-        <p>When you're ready, type in your guess and press the "Submit" button.</p>
-        <div><div id="back-button" class="border tile button">Back</div></div>
-        <div></div>
-        <script>
-addEventListener("keydown", (e) => { if (e.key === "Enter") window.history.back(); });
-document.getElementById("back-button").addEventListener("click", () => { window.history.back(); });
-        </script>
+    <body>
+        <main>
+            <div></div>
+            <p>HOW TO PLAY ZORSE</p>
+            <p>Tap on a tile to reveal it. You can reveal up to five tiles. The fewer reveals you use, the better!</p>
+            <p>When you're ready, type in your guess and press the "Submit" button.</p>
+            <div id="back-button" class="border button">Back</div>
+            <div></div>
+            <script>
+                addEventListener("keydown", (e) => { if (e.key === "Enter") window.history.back(); });
+                document.getElementById("back-button").addEventListener("click", () => { window.history.back(); });
+            </script>
+        </main>
     </body>
 </html>

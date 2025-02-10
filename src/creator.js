@@ -1,24 +1,31 @@
 import * as puzzle from "./puzzle.js";
 
-export const elements = { styles: ["wrapper"], children: [
-    { },
-    { children: ["CLUE", { tag: "input", styles: ["border"] }] },
-    { children: ["SOLUTION", { tag: "input", styles: ["border"] }] },
-    { children: ["REVEALED LETTERS", { tag: "input", styles: ["border"] }] },
-    { children: [{ styles: ["border", "tile", "button"], children: ["Share"] }] },
-    { children: [{ styles: ["border", "tile", "button"], children: ["Play"] }] },
-    { },
-] };
+// array of HTML elements to create on the page
+export const elements = [
+    { styles: ["hidden"], children: ["CLUE", { tag: "input", styles: ["border"] }] },
+    { styles: ["hidden"], children: ["SOLUTION", { tag: "input", styles: ["border"] }] },
+    { styles: ["hidden"], children: ["REVEALED LETTERS", { tag: "input", styles: ["border"] }] },
+    { styles: ["hidden", "border", "button"], children: ["Share"] },
+    { styles: ["hidden", "border", "button"], children: ["Play"] },
+];
 
+// dictionary of commonly used wrappers
 const wrappers = {
-    clue: elements.children[1].children[1],
-    solution: elements.children[2].children[1],
-    letters: elements.children[3].children[1],
-    share: elements.children[4].children[0],
-    play: elements.children[5].children[0],
+    clue: elements[0],
+    clueInput: elements[0].children[1],
+
+    solution: elements[1],
+    solutionInput: elements[1].children[1],
+
+    letters: elements[2],
+    lettersInput: elements[2].children[1],
+
+    share: elements[3],
+    play: elements[4],
 };
 
-export function initializeEventListeners() {
+// initialize event listeners on the HTML elements
+export function init() {
 
     // share the puzzle URL when the share button is clicked
     wrappers.share.ref.addEventListener("click", share);
@@ -28,18 +35,28 @@ export function initializeEventListeners() {
 
     // navigate to the puzzle page when the enter key is pressed
     addEventListener("keydown", (e) => { if (e.key === "Enter") play(); });
+
+    // show the HTML elements
+    wrappers.clue.ref.classList.remove("hidden");
+    wrappers.solution.ref.classList.remove("hidden");
+    wrappers.letters.ref.classList.remove("hidden");
+    wrappers.share.ref.classList.remove("hidden");
+    wrappers.play.ref.classList.remove("hidden");
 }
 
+// share the link to the new puzzle
 function share() {
     setPuzzle();
     puzzle.shareURL();
 }
 
+// load the new puzzle in the same tab
 function play() {
     setPuzzle();
     location = puzzle.getURL();
 }
 
+// update the puzzle with the input values
 function setPuzzle() {
-    puzzle.set(wrappers.clue.ref.value, wrappers.solution.ref.value, wrappers.letters.ref.value);
+    puzzle.set(wrappers.clueInput.ref.value, wrappers.solutionInput.ref.value, wrappers.lettersInput.ref.value);
 }
