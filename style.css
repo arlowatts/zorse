@@ -34,7 +34,7 @@ main {
 
     flex-grow: 1;
 
-    input {
+    & input {
         font-size: inherit;
         text-transform: uppercase;
 
@@ -42,12 +42,12 @@ main {
         padding: 0.5em;
     }
 
-    .word {
+    & .word {
         display: inline-block;
         margin: 0.05em 0.65em;
     }
 
-    .border {
+    & .border {
         border: 0.1em solid lightgray;
         border-radius: 0.25em;
         box-sizing: border-box;
