@@ -14,6 +14,11 @@ body {
     touch-action: manipulation;
     -webkit-user-select: none;
     user-select: none;
+
+    @media (prefers-color-scheme: dark) {
+        background-color: black;
+        color: lightgray;
+    }
 }
 
 header .link {
@@ -24,6 +29,10 @@ header .link {
     display: inline-block;
     margin: 0.25em 1em;
     cursor: pointer;
+
+    @media (prefers-color-scheme: dark) {
+        color: slategray;
+    }
 }
 
 main {
@@ -39,6 +48,9 @@ main {
         font-weight: initial;
         text-transform: uppercase;
 
+        background-color: inherit;
+        color: inherit;
+
         width: calc(100% - 1em);
         padding: 0.5em;
     }
@@ -52,6 +64,10 @@ main {
         border: 0.1em solid lightgray;
         border-radius: 0.25em;
         box-sizing: border-box;
+
+        @media (prefers-color-scheme: dark) {
+            border-color: slategray;
+        }
 
         &.button {
             cursor: pointer;
@@ -86,6 +102,10 @@ main {
 
                 &.pressed {
                     background-color: lightgray;
+
+                    @media (prefers-color-scheme: dark) {
+                        background-color: slategray;
+                    }
                 }
 
                 &.large {
@@ -101,12 +121,21 @@ main {
         &.locked {
             color: lightgray;
             cursor: default;
+
+            @media (prefers-color-scheme: dark) {
+                color: slategray;
+            }
         }
 
         &.filled {
             border-color: darkseagreen;
             background-color: darkseagreen;
             cursor: default;
+
+            @media (prefers-color-scheme: dark) {
+                border-color: seagreen;
+                background-color: seagreen;
+            }
         }
     }
 }
