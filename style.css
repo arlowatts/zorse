@@ -34,8 +34,9 @@ main {
 
     flex-grow: 1;
 
-    & input {
-        font-size: inherit;
+    & textarea {
+        font: inherit;
+        font-weight: initial;
         text-transform: uppercase;
 
         width: calc(100% - 1em);

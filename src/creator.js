@@ -2,9 +2,9 @@ import * as puzzle from "./puzzle.js";
 
 // array of HTML elements to create on the page
 export const elements = [
-    { styles: ["hidden"], children: ["CLUE", { tag: "input", styles: ["border"] }] },
-    { styles: ["hidden"], children: ["SOLUTION", { tag: "input", styles: ["border"] }] },
-    { styles: ["hidden"], children: ["REVEALED LETTERS", { tag: "input", styles: ["border"] }] },
+    { styles: ["hidden"], children: ["CLUE", { tag: "textarea", styles: ["border"] }] },
+    { styles: ["hidden"], children: ["SOLUTION", { tag: "textarea", styles: ["border"] }] },
+    { styles: ["hidden"], children: ["REVEALED LETTERS", { tag: "textarea", styles: ["border"] }] },
     { styles: ["hidden", "border", "button"], children: ["Share"] },
     { styles: ["hidden", "border", "button"], children: ["Play"] },
 ];
