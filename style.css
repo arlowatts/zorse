@@ -1,9 +1,26 @@
+:root {
+    --background: white;
+    --text:       black;
+    --border:     lightgray;
+    --fill:       darkseagreen;
+
+    @media (prefers-color-scheme: dark) {
+        --background: black;
+        --text:       lightgray;
+        --border:     #444444;
+        --fill:       #306040;
+    }
+}
+
 html {
     height: 100%;
 }
 
 body {
     font: bold 60px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    background-color: var(--background);
+    color: var(--text);
 
     display: flex;
     flex-direction: column;
@@ -14,25 +31,16 @@ body {
     touch-action: manipulation;
     -webkit-user-select: none;
     user-select: none;
-
-    @media (prefers-color-scheme: dark) {
-        background-color: black;
-        color: lightgray;
-    }
 }
 
 header .link {
     font-size: 40px;
-    color: lightgray;
+    color: var(--border);
     text-decoration: underline;
 
     display: inline-block;
     margin: 0.25em 1em;
     cursor: pointer;
-
-    @media (prefers-color-scheme: dark) {
-        color: slategray;
-    }
 }
 
 main {
@@ -61,13 +69,9 @@ main {
     }
 
     & .border {
-        border: 0.1em solid lightgray;
+        border: 0.1em solid var(--border);
         border-radius: 0.25em;
         box-sizing: border-box;
-
-        @media (prefers-color-scheme: dark) {
-            border-color: slategray;
-        }
 
         &.button {
             cursor: pointer;
@@ -101,11 +105,7 @@ main {
                 line-height: 2.3em;
 
                 &.pressed {
-                    background-color: lightgray;
-
-                    @media (prefers-color-scheme: dark) {
-                        background-color: slategray;
-                    }
+                    background-color: var(--border);
                 }
 
                 &.large {
@@ -119,23 +119,14 @@ main {
         }
 
         &.locked {
-            color: lightgray;
+            color: var(--border);
             cursor: default;
-
-            @media (prefers-color-scheme: dark) {
-                color: slategray;
-            }
         }
 
         &.filled {
-            border-color: darkseagreen;
-            background-color: darkseagreen;
+            border-color: var(--fill);
+            background-color: var(--fill);
             cursor: default;
-
-            @media (prefers-color-scheme: dark) {
-                border-color: seagreen;
-                background-color: seagreen;
-            }
         }
     }
 }
