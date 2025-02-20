@@ -77,6 +77,9 @@ function getKeyboardKey(display, data, styles = []) {
             pointerup: (e) => {
                 e.target.classList.remove("pressed");
             },
+            pointerleave: (e) => {
+                e.target.classList.remove("pressed");
+            },
             click: (e) => {
                 e.preventDefault();
             },
