@@ -9,7 +9,7 @@ const elements = [
     { tag: "header", children: [
         { styles: ["link"], children: ["How to play"], listeners: { "click": gotoTutorial } },
         { styles: ["link"], children: ["Create"], listeners: { "click": gotoCreate } },
-        { styles: ["link", "hidden"], children: ["Share this zorse"], listeners: { "click": puzzle.shareURL } },
+        { styles: ["link", "hidden"], children: ["Share"], listeners: { "click": puzzle.shareURL } },
     ] },
     { tag: "main", children: [
         { },
