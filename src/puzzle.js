@@ -24,7 +24,7 @@ export const elements = [
     { styles: ["hidden"] },
     { styles: ["hidden"] },
     { styles: ["hidden"] },
-    { styles: ["hidden", "border", "button"], children: ["Share"], listeners: { "click": shareScore } },
+    { styles: ["hidden", "border", "button"], children: ["Share"], listeners: { click: shareScore } },
 ];
 
 // dictionary of commonly used wrappers
@@ -99,7 +99,7 @@ export function set(clue, solution, letters) {
                 word.children.push({
                     styles: STYLES_TILE,
                     data: tileText,
-                    listeners: { "click": () => { revealLetter(tileText); } },
+                    listeners: { click: () => { revealLetter(tileText); } },
                 });
             }
 

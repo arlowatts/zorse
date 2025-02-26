@@ -7,9 +7,9 @@ addEventListener("load", main);
 // array of HTML elements to create on the page
 const elements = [
     { tag: "header", children: [
-        { styles: ["link"], children: ["How to play"], listeners: { "click": gotoTutorial } },
-        { styles: ["link"], children: ["Create"], listeners: { "click": gotoCreate } },
-        { styles: ["link", "hidden"], children: ["Share"], listeners: { "click": puzzle.shareURL } },
+        { styles: ["link"], children: ["How to play"], listeners: { click: gotoTutorial } },
+        { styles: ["link"], children: ["Create"], listeners: { click: gotoCreate } },
+        { styles: ["link", "hidden"], children: ["Share"], listeners: { click: puzzle.shareURL } },
     ] },
     { tag: "main", children: [
         { },

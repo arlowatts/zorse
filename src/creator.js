@@ -5,8 +5,8 @@ export const elements = [
     { styles: ["hidden"], children: ["CLUE", { tag: "textarea", styles: ["border"] }] },
     { styles: ["hidden"], children: ["SOLUTION", { tag: "textarea", styles: ["border"] }] },
     { styles: ["hidden"], children: ["REVEALED LETTERS", { tag: "textarea", styles: ["border"] }] },
-    { styles: ["hidden", "border", "button"], children: ["Share"] },
-    { styles: ["hidden", "border", "button"], children: ["Play"] },
+    { styles: ["hidden", "border", "button"], children: ["Share"], listeners: { click: share } },
+    { styles: ["hidden", "border", "button"], children: ["Play"], listeners: { click: play } },
 ];
 
 // dictionary of commonly used wrappers
@@ -26,12 +26,6 @@ const wrappers = {
 
 // initialize event listeners on the HTML elements
 export function init() {
-
-    // share the puzzle URL when the share button is clicked
-    wrappers.share.ref.addEventListener("click", share);
-
-    // navigate to the puzzle page when the play button is clicked
-    wrappers.play.ref.addEventListener("click", play);
 
     // navigate to the puzzle page when the enter key is pressed
     addEventListener("keydown", (e) => { if (e.key === "Enter") play(); });
