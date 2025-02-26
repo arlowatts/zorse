@@ -19,7 +19,7 @@ const KEYBOARD_KEY_SUBMIT = keyboard.getKey("ENTER");
 
 // array of HTML elements to create on the page
 export const elements = [
-    { styles: ["hidden"] },
+    { styles: ["hidden", "title"] },
     { styles: ["hidden"] },
     { styles: ["hidden"] },
     { styles: ["hidden"] },
