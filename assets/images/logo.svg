@@ -1,3 +1,4 @@
+<!-- convert -density 2048 -resize 150x150 -background white -bordercolor white -border 15x15 assets/images/logo.svg assets/images/logo.png -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
     <path d="M 8 38
         q -1 -2 1 0
