@@ -22,7 +22,7 @@ export const elements = [
     { styles: ["hidden", "title"] },
     { styles: ["hidden"] },
     { styles: ["hidden"] },
-    { styles: ["hidden"] },
+    { styles: ["hidden", "title"] },
     { styles: ["hidden"] },
     { styles: ["hidden", "border", "button"], children: ["Share"], listeners: { click: shareScore } },
 ];
