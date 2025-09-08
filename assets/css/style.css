@@ -73,7 +73,10 @@ main {
     }
 
     & .word {
-        display: inline-block;
+        display: inline-flex;
+        vertical-align: top;
+
+        max-width: calc(100% - (2 * 0.65em));
         margin: 0.05em 0.65em;
     }
 
