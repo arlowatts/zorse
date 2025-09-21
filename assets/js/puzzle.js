@@ -258,14 +258,25 @@ export function getURL() {
     return puzzle.url;
 }
 
-// share the puzzle's URL using the browser's built-in share feature
+// share the puzzle's URL
 export function shareURL() {
-    navigator.share({ text: "\"" + puzzle.clue + "\"\n" + puzzle.url });
+    shareText("\"" + puzzle.clue + "\"\n" + puzzle.url);
 }
 
-// share the puzzle's score using the browser's built-in share feature
+// share the player's score
 function shareScore() {
-    navigator.share({ text: "\"" + puzzle.clue + "\"\n" + puzzle.score });
+    shareText("\"" + puzzle.clue + "\"\n" + puzzle.score);
+}
+
+// share a string either through the browser's built-in share feature or by
+// copying to the clipboard
+function shareText(text) {
+
+    if (navigator.share)
+        navigator.share({ "text": text })
+
+    else if (confirm("Copy text to clipboard?\n\n" + text))
+        navigator.clipboard.writeText(text);
 }
 
 // reveal all instances of a letter in the solution
